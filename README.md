@@ -1,6 +1,12 @@
-# Project Name
+# Data Visualization Group Project
+This repository covers all group work under the COS30045 Data Visualisation unit.
 
-Short project description or tagline.
+Session:
+C1 - Group 1
+
+Contributors :
+Jia Min Cheong, 104096964
+Nakshatramaalah A/P R Thirukumar, 103814424
 
 ![Project Logo or Screenshot](images/logo.png)
 
@@ -31,7 +37,7 @@ Provide step-by-step instructions on how to install and set up your project.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/yourproject.git
+git clone https://github.com/Shana1021/COS30045-GroupProject-G1.git
 
 # Change directory
 cd yourproject
