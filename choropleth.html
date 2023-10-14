@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>a. Immigrants in Asian Regions</title>
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <script src="https://unpkg.com/d3-simple-slider"></script>
+
+    <!-- <link rel="stylesheet" href="a.css" /> -->
+    <style>
+        /* TODO change to countries */
+        .counties {
+            fill: none;
+        }
+
+        /* TODO change to regions */
+        .states {
+            fill: none;
+            stroke: #fff;
+            stroke-linejoin: round;
+        }
+
+        .slider {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrapper">
+        <div class="content">
+            <h1>Choropleth</h1>
+            <p id="output"></p>
+            <p id="desc"></p>
+            <!-- <svg id="sideInfo"></svg> -->
+            <svg id="map" width="960" height="600"></svg>
+            <div>
+                <input type="radio" name="gender" value="B" id="b" onchange="getValue(this)">
+                <label for="b">Both</label>
+            </div>
+            <div>
+                <input type="radio" name="gender" value="F" id="f" onchange="getValue(this)">
+                <label for="f">Female</label>
+            </div>
+            <div>
+                <input type="radio" name="gender" value="M" id="m" onchange="getValue(this)">
+                <label for="m">Male</label>
+            </div>
+            <div id="cajaSlider">
+                <!-- <div class="mano"></div> -->
+                <div id="slider"></div>
+                <!-- <div class="inicio">1990</div>
+                <div class="final">2020</div> -->
+            </div>
+
+            <div class="">
+                <p class="mb3">
+                    Source:
+                    <a href="">United Nations</a>,
+                    <a href="">Censue Bureau</a>
+                </p>
+                <br />
+                <h2>Credit and Licence</h2>
+                Code has bee... Adapted from <a href="">this example</a>
+            </div>
+        </div>
+    </main>
+</body>
+
+<script>
+    // Change text in webpage to indicate year of the data
+    // d3.select("#desc").html(
+    //     "This choropleth shows total of immigrants in " + trimestres[trimestres.length - 1].substring(5)
+    // );
+
+    // 3D dataset    
+    // [
+    //     [ // ""KAZ""
+    //         [], // both1990 - both2020
+    //         [], // male1990 - male2020
+    //         [] // female1990 - female2020
+    //     ],
+    //     [ // "KGZ"
+    //         [], // both1990 - both2020
+    //         [], // male1990 - male2020
+    //         [] // female1990 - female2020
+    //     ], other countries...
+    // ]
+    // var dataset = [];
+    var dataset = {};
+    let topo;
+    // 2D dataset for one country
+    //     [ 
+    //         [], // both1990 - both2020
+    //         [], // male1990 - male2020
+    //         [] // female1990 - female2020
+    //     ],
+    // var countryDataset = [
+    //     [], // both1990 - both2020
+    //     [], // male1990 - male2020
+    //     [] // female1990 - female2020
+    // ];
+    // var trimestres = new Array(
+    //     "both1990", "both1995", "both2000", "both2005", "both2010", "both2015", "both2020", "male1990", "male1995", "male2000", "male2005", "male2010", "male2015", "male2020", "female1990", "female1995", "female2000", "female2005", "female2010", "female2015", "female2020"
+    // );
+    // trimestres.reverse();
+
+    // Filter for Asian countries
+    var asia = [];
+
+    // Filter gender
+    let selectedGender = "B";
+
+    // p
+    const p = d3.select("#output");
+
+    // The svg
+    // const sideInfo = d3.select("#sideInfo");
+    const svg = d3.select("#map"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height");
+
+    // Map and projection
+    const path = d3.geoPath();
+    const projection = d3.geoMercator()
+        .scale(400)
+        .center([0, 20])
+        .translate([width / 2 - 580, height / 2]);
+
+    // Data and color scale
+    const data = new Map();
+    const colorScale = d3.scaleThreshold()
+        .domain([100000, 1000000, 10000000, 30000000, 100000000])
+        .range(d3.schemeBlues[5]);
+
+    // Legend
+    var x = d3.scaleLinear().domain([1, 100000000]).rangeRound([600, 860]);
+    var g = svg
+        .append("g")
+        .attr("class", "key") // create a group called 'key'
+        .attr("transform", "translate(0, 40)"); // move to 0,40
+    g.selectAll("rect")
+        .data(
+            colorScale.range().map(function (d) {
+                d = colorScale.invertExtent(d);
+                if (d[0] == null) d[0] = x.domain()[0];
+                if (d[1] == null) d[1] = x.domain()[1];
+                return d;
+            })
+        )
+        .enter().append("rect")
+        .attr("height", 8)
+        .attr("x", function (d) { return x(d[0]); })
+        .attr("width", function (d) { return x(d[1]) - x(d[0]); })
+        .attr("fill", function (d) { return colorScale(d[0]); });
+    g.append("text")
+        .attr("class", "caption")
+        .attr("x", x.range()[0])
+        .attr("y", -6)
+        .attr("fill", "#000")
+        .attr("text-anchor", "start")
+        .attr("font-weight", "bold")
+        .text("Number of Immigrants");
+    g.call(d3.axisBottom(x)
+        .ticks(13)
+        .tickFormat(function (x, i) { return i ? x : x + "%"; })
+        .tickValues(colorScale.domain()))
+        .select(".domain")
+        .remove();
+
+    // if (dataset.length == 0) loadData(selectedGender);
+    if (Object.keys(dataset).length === 0) loadData(selectedGender);
+    function getValue(radio) {
+        loadData(selectedGender = radio.value);
+        output.innerText = selectedGender ? `You selected ${selectedGender}` : `You haven't selected any gender`;
+    }
+
+    function drawMap(topo, selectedGender, year = 6) {
+        for (const [key, value] of Object.entries(dataset)) {
+            console.log(key, value);
+            switch (selectedGender) {
+                case "M":
+                    data.set(key, dataset[key].male)
+                    break;
+                case "F":
+                    data.set(key, dataset[key].female)
+                    break;
+                default:
+                    data.set(key, dataset[key].both)
+            }
+        }
+
+        console.log(topo)
+        svg.append("g")
+            .selectAll("path")
+            .data(topo.features.filter(function (d) {
+                return asia.includes(d.id);
+            }))
+            .enter()
+            .append("path")
+            // draw each country
+            .attr("d", d3.geoPath()
+                .projection(projection)
+            )
+            // set the color of each country
+            .attr("fill", function (d) {
+                d.total = data.get(d.id)[year] || 0;
+                console.log(`${d.id} : ${selectedGender}, ${1990 + year * 5} year => ${d.total} `)
+                return colorScale(d.total);
+            })
+            .style("stroke", "transparent")
+            .attr("class", function (d) { return "Country" })
+            .style("opacity", .8)
+            .attr("transform", "translate(0, 50)")
+            .on("mouseover", mouseOver)
+            .on("mouseleave", mouseLeave)
+            //tooltip
+            .append("title")
+            .text(function (d) {
+                // console.log(d)
+                return d.id + "\n" + d.total;
+            });
+    }
+
+
+    const yearList = [1990, 1995, 2000, 2005, 2010, 2015, 2020];
+    // yearList.forEach(function callback(value, index) {
+    //     var inter = setInterval(function () {
+    //         drawMap(topo, year = index);
+    //         d3.select("#desc").html( // Change text in webpage to indicate year of the data
+    //             "This choropleth shows total of immigrants in " + value
+    //         );
+    //     }, 5000); //2000 = 2 sec
+    // });
+
+
+    function loadData(selectedGender) { // Load external data and boot
+        // svg.selectAll("*").remove();        
+        Promise.all([
+            d3.json("countries.geojson"), // d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"),
+            d3.csv("a.csv", function (d) { //https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv
+                if (d.id) {
+                    // countryDataset = [
+                    //     [], // both1990 - both2020
+                    //     [], // male1990 - male2020
+                    //     [] // female1990 - female2020
+                    // ];
+                    asia.push(d.id); // set asian countries filter
+                    // countryDataset[0].push([+d.both1990, +d.both1995, +d.both2000, +d.both2005, +d.both2010, +d.both2015, +d.both2020]);
+                    // countryDataset[1].push([+d.male1990, +d.male1995, +d.male2000, +d.male2005, +d.male2010, +d.male2015, +d.male2020]);
+                    // countryDataset[2].push([+d.female1990, +d.female1995, +d.female2000, +d.female2005, +d.female2010, +d.female2015, +d.female2020]);
+                    // console.log(d.id + "country 2d dataset");
+                    // console.log(countryDataset);
+                    // dataset.push(countryDataset);
+
+                    dataset[d.id] = {
+                        both: [+d.both1990, +d.both1995, +d.both2000, +d.both2005, +d.both2010, +d.both2015, +d.both2020],
+                        male: [+d.male1990, +d.male1995, +d.male2000, +d.male2005, +d.male2010, +d.male2015, +d.male2020],
+                        female: [+d.female1990, +d.female1995, +d.female2000, +d.female2005, +d.female2010, +d.female2015, +d.female2020]
+                    };
+                    // switch (selectedGender) {
+                    //     case "M":
+                    //         data.set(d.id, dataset[d.id].male[6])
+                    //         // data.set(d.id, countryDataset[1][0][6])
+                    //         break;
+                    //     case "F":
+                    //         // data.set(d.id, countryDataset[2][0][6])
+                    //         break;
+                    //     default:
+                    //         data.set(d.id, dataset[d.id].both[6])
+                    //     // data.set(d.id, countryDataset[0][0][6])
+                    // }
+                    // switch (selectedGender) {
+                    //     case "M":
+                    //         data.set(d.id, +d.male2020)
+                    //         break;
+                    //     case "F":
+                    //         data.set(d.id, +d.female2020)
+                    //         break;
+                    //     default:
+                    //         data.set(d.id, +d.both2020)
+                    // }
+                }
+            })]).then(function (loadData) {
+                topo = loadData[0]; // access geojson
+
+                drawMap(topo, selectedGender);
+                // svg.append("g")
+                //     .selectAll("path")
+                //     .data(topo.features.filter(function (d) {
+                //         // console.log(d)
+                //         // return d.id == "AFG";
+                //         // console.log(asia)
+                //         return asia.includes(d.id);
+                //     }))
+                //     .enter()
+                //     .append("path")
+                //     // draw each country
+                //     .attr("d", d3.geoPath()
+                //         .projection(projection)
+                //     )
+                //     // set the color of each country
+                //     .attr("fill", function (d) {
+                //         console.log(d)
+                //         d.total = data.get(d.id) || 0;
+                //         return colorScale(d.total);
+                //     })
+                //     .style("stroke", "transparent")
+                //     .attr("class", function (d) { return "Country" })
+                //     .style("opacity", .8)
+                //     .attr("transform", "translate(0, 50)")
+                //     .on("mouseover", mouseOver)
+                //     .on("mouseleave", mouseLeave)
+                //     //tooltip
+                //     .append("title")
+                //     .text(function (d) {
+                //         // console.log(d)
+                //         return d.id + "\n" + d.total;
+                //     });
+            });
+    }
+    let mouseOver = function (d) {
+        d3.selectAll(".Country")
+            .transition()
+            .duration(200)
+            .style("opacity", .5)
+        d3.select(this)
+            .transition()
+            .duration(200)
+            .style("opacity", 1)
+            .style("stroke", "black")
+    }
+
+    let mouseLeave = function (d) {
+        d3.selectAll(".Country")
+            .transition()
+            .duration(200)
+            .style("opacity", .8)
+        d3.select(this)
+            .transition()
+            .duration(200)
+            .style("stroke", "transparent")
+    }
+
+    // region: Slider
+    var margin = { top: 50, right: 50, bottom: 0, left: 50 },
+        w = 960 - margin.left - margin.right,
+        h = 500 - margin.top - margin.bottom;
+
+    // var formatTickDate = d3.timeFormat("%A %e");
+    // var formatTooltipDate = d3.timeFormat("%A %e - %H:%M");
+
+    var startDate = Date.now();
+    var endDate = new Date();
+
+    Date.prototype.addDays = function (days) {
+        var date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+    };
+
+    // var moving = false;
+    var targetValue = w;
+    var timer;
+
+    endDate = endDate.addDays(10);
+
+    // var tickVals = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(iter => new Date().setHours(24 * iter, 0, 0, 0));
+
+    // var playButton = d3.select("#play-button");
+
+    var sliderTime = d3
+        .sliderBottom()
+        .min(yearList[0])
+        .max(yearList[yearList.length - 1])
+        .step(5) //1000 * 60 * 60 * 3
+        .width(w + margin.left + margin.right - 20)
+        // .tickFormat(formatTickDate)
+        .tickValues(yearList)
+        .fill('#2196f3')
+        // .displayFormat(formatTooltipDate)
+        .default(yearList[yearList.length - 1]) //Date.now()
+        .handle(d3.symbol().type(d3.symbolCircle).size(200)()) // size of slider dragger
+        // .on("drag", function (val) {
+        //     resetTimer();
+        // })
+        .on("onchange", function (val) {
+            d3.select("#desc").text(val);
+            drawMap(topo, selectedGender, (val - 1990) / 5)
+            // d3.select(".tick text").attr("opacity", "1");
+            // d3.select("p#value-time").text(formatTooltipDate(val))
+        });
+
+    var gTime = d3
+        .select("div#slider")
+        .append("svg")
+        .attr("width", 1000)
+        .attr("height", 100)
+        .append("g")
+        .attr("transform", "translate(30,30)");
+
+    gTime.call(sliderTime);
+
+    // d3.select("p#value-time").text(formatTooltipDate(sliderTime.value()));
+    // d3.select(".parameter-value text").attr("y", "-29");
+    // d3.selectAll(".tick text").style("text-anchor", "start");
+
+    // playButton.on("click", function () {
+    //     var button = d3.select(this);
+    //     if (button.text() == "Pause") {
+    //         resetTimer();
+    //     } else {
+    //         moving = true;
+    //         timer = setInterval(update, 1000);
+    //         button.text("Pause");
+    //     }
+    // });
+
+    // function update() {
+    //     var offset = sliderTime.value().valueOf() + 10800000;
+    //     sliderTime.value(offset);
+    //     //pause, uncomment to restart
+    //     if (offset >= endDate.valueOf()) {
+    //         resetTimer();
+    //         // sliderTime.value(startDate.valueOf());
+    //     }
+    // }
+
+    // function resetTimer() {
+    //     moving = false;
+    //     // clearInterval(timer);
+    //     // playButton.text("Play");
+    // }
+    // endregion: Slider
+
+</script>
+
+</html>
