@@ -28,15 +28,10 @@
 
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="sankey.js"></script>
+    <h1>Female Immigrants Origins and Asian Region Destinations, 2020</h1>
+    <h2>Where are they from and where do they go?</h2>
     <button id="reset">Reset</button>
     <script>
-
-        // TODO Fix problem svg downwards, at code var link = svg
-        // when onclick destination
-        // eastern asia
-        // central asia
-        // solution: filter out value of 0
-
         var units = "Immigrants";
         var sources = [];
         var targets = [];
@@ -54,7 +49,6 @@
         loadData()
         function loadData(nodeName = "All") {
             d3.select("svg").remove();
-            console.log(nodeName)
             // append the svg object to the body of the page
             var svg = d3.select("body").append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -71,9 +65,7 @@
 
             var path = sankey.link();
 
-
             d3.csv("c.csv", function (error, data) {
-                // d3.csv("c-test.csv", function (error, data) {
                 var filteredData;
                 if (nodeName == "All") {
                     filteredData = data;
@@ -82,21 +74,11 @@
                         filteredData = data.filter(function (row) {
                             return row['source'] == nodeName;
                         });
-                        console.log(filteredData)
-                        // filteredData.push(function (row) {
-                        //     return targets.includes(row['target']);
-                        // });
-                        // console.log(filteredData)
                     }
                     if (targets.includes(nodeName)) {
                         filteredData = data.filter(function (row) {
                             return row['target'] == nodeName;
                         });
-                        console.log(filteredData)
-                        // filteredData.push(function (row) {
-                        //     return sources.includes(row['source']);
-                        // });
-                        // console.log(filteredData)
                     }
                 }
                 //set up graph in same style as original example but empty
@@ -164,10 +146,8 @@
                         return "translate(" + d.x + "," + d.y + ")";
                     })
                     .on("click", function (d) {
-                        // console.log(d)
                         loadData(d.name);
                         if (d3.event.defaultPrevented) return;
-                        // alert("clicked!" + d.value);
                     })
                     .call(d3.drag()
                         .subject(function (d) {
