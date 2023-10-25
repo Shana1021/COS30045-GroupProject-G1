@@ -11,52 +11,16 @@
         stroke-width: 1.5px;
     }
 </style>
-<svg width="960" height="500"></svg>
+<svg id="f" width="960" height="500"></svg>
 <script src="https://d3js.org/d3.v6.min.js"></script>
 <script>
 
-    var svg = d3.select("svg"),
+    var svg = d3.select("#f"),
         margin = { top: 20, right: 80, bottom: 30, left: 150 },
         width = svg.attr("width") - margin.left - margin.right,
         height = svg.attr("height") - margin.top - margin.bottom,
         g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    // ----------- Legend
-    // var legendData = [
-    //     { label: "Male", color: "blue" },
-    //     { label: "Female", color: "pink" },
-    //     { label: "Diff", color: "orange" }
-    // ];
-
-    // var legend = svg.append("g")
-    //     .attr("class", "legend")
-    //     .attr("transform", "translate(20, 20)"); // Adjust the coordinates for placement
-
-    // var legendItems = legend.selectAll(".legend-item")
-    //     .data(legendData)
-    //     .enter()
-    //     .append("g")
-    //     .attr("class", "legend-item")
-    //     .attr("transform", function (d, i) {
-    //         return "translate(0," + (i * 20) + ")"; // Adjust the vertical spacing
-    //     });
-
-    // legendItems.append("rect")
-    //     .attr("width", 15) // Adjust the width of the colored rectangle
-    //     .attr("height", 15) // Adjust the height of the colored rectangle
-    //     .style("fill", function (d) {
-    //         return d.color;
-    //     });
-
-    // legendItems.append("text")
-    //     .attr("x", 20) // Adjust the distance between the colored rectangle and the text
-    //     .attr("y", 9) // Adjust the vertical positioning of the text
-    //     .text(function (d) {
-    //         return d.label;
-    //     });
-    // -----------End Legend
-
-    // var parseTime = d3.timeParse("%Y");
     var parseTime = d3.timeParse("%Y%m%d");
 
     var x = d3.scaleTime().range([0, width - margin.right]),
@@ -75,7 +39,6 @@
 
 
     d3.csv("b.csv", function (d) {
-        // d3.tsv("b.tsv", function (d) {
         return d;
     }).then(function (data) {
         // console.log(data)
@@ -145,8 +108,8 @@
                 return;
             }
             city.selectAll('.line').style('stroke', d => {
-                let target_id = d.id.substring(0, 3).toUpperCase();
-                if (d.id.substring(0, 3).toUpperCase() == id) {
+                let target_id = d.id.substring(0, 6).toUpperCase();
+                if (d.id.substring(0, 6).toUpperCase() == id) {
                     return z(d.id)
                 } else {
                     return '#eaeaea'
@@ -181,8 +144,8 @@
             } else {
                 path.attr('visibility', 'visible');
                 city.selectAll('.line').style('stroke', d => {
-                    let target_id = d.id.substring(0, 3).toUpperCase();
-                    if (d.id.substring(0, 3).toUpperCase() == id) {
+                    let target_id = d.id.substring(0, 6).toUpperCase();
+                    if (d.id.substring(0, 6).toUpperCase() == id) {
                         return z(d.id)
                     } else {
                         return '#eaeaea'
@@ -215,8 +178,8 @@
         city.append("path")
             .attr("class", "line")
             .attr("d", function (d) { return line(d.values); })
-            .attr("id", d => d.id.substring(0, 3).toUpperCase())
-            .attr("data-id", d => d.id.substring(0, 3).toUpperCase())
+            .attr("id", d => d.id.substring(0, 6).toUpperCase())
+            .attr("data-id", d => d.id.substring(0, 6).toUpperCase())
             .attr("visibility", "visible")
             .style("stroke", function (d) { return z(d.id); })
             .on("click", click)
@@ -233,7 +196,7 @@
             .attr("x", 55)
             .attr("y", 15)
             .attr("dy", "0.35em")
-            .attr("data-id", d => d.id.substring(0, 3).toUpperCase())
+            .attr("data-id", d => d.id.substring(0, 6).toUpperCase())
             .style("font", "10px sans-serif")
             .text(function (d) { return d.id; })
             .on("click", click)
