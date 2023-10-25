@@ -4,24 +4,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>a. Immigrants in Asian Regions</title>
+    <title>Total Immigrants by Country in Asia</title>
     <script src="https://d3js.org/d3.v6.js"></script>
     <script src="https://unpkg.com/d3-simple-slider"></script>
-
     <!-- <link rel="stylesheet" href="a.css" /> -->
     <style>
-        /* TODO change to countries */
-        .counties {
-            fill: none;
-        }
-
-        /* TODO change to regions */
-        .states {
-            fill: none;
-            stroke: #fff;
-            stroke-linejoin: round;
-        }
-
         .slider {
             cursor: pointer;
         }
@@ -31,26 +18,25 @@
 <body>
     <main class="wrapper">
         <div class="content">
-            <h1>Total Immigrants by Country in Asia<br>2020</h1>
-            <p id="output"></p>
-            <p id="desc"></p>
-            <!-- <svg id="sideInfo"></svg> -->
+            <h1>Total Immigrants by Country in Asia<br>1995 - 2020</h1>
+            <!--#region gender -->
+            <div>
+                <span>
+                    <input type="radio" name="gender" value="B" id="b" onchange="getValue(this)" checked>
+                    <label for="b">Both</label>
+                </span>
+                <span>
+                    <input type="radio" name="gender" value="F" id="f" onchange="getValue(this)">
+                    <label for="f">Female</label>
+                </span>
+                <span>
+                    <input type="radio" name="gender" value="M" id="m" onchange="getValue(this)">
+                    <label for="m">Male</label>
+                </span>
+            </div>
+            <!--#endregion -->
+            <div id="slider"></div>
             <svg id="map" width="960" height="600"></svg>
-            <div>
-                <input type="radio" name="gender" value="B" id="b" onchange="getValue(this)">
-                <label for="b">Both</label>
-            </div>
-            <div>
-                <input type="radio" name="gender" value="F" id="f" onchange="getValue(this)">
-                <label for="f">Female</label>
-            </div>
-            <div>
-                <input type="radio" name="gender" value="M" id="m" onchange="getValue(this)">
-                <label for="m">Male</label>
-            </div>
-            <div id="cajaSlider">
-                <div id="slider"></div>
-            </div>
         </div>
     </main>
 </body>
@@ -86,10 +72,17 @@
         .center([0, 20])
         .translate([width / 2 - 580, height / 2]);
 
-    // Data and color scale
-    // const quartiles = [105132.5, 516920.5, 2762330, 280598105];
-    const deciles = [0 /*added so 0 wont show up white */, 24774.5, 71522, 139773.5, 267922, 516920.5, 1050070, 1916439.5, 3632496, 9857625.5, 280598105]
+    // Data 
     const data = new Map();
+
+    //#region FORMATTERs
+    const formatTick = d3.formatPrefix(",.0", 1e3);
+    const formattedNumber = (number) => number.toLocaleString();
+    const formatYear = (year) => year.toString();
+    //#endregion FORMATTERs
+
+    //Color scale    
+    const deciles = [0 /*added so 0 wont show up white */, 24774.5, 71522, 139773.5, 267922, 516920.5, 1050070, 1916439.5, 3632496, 9857625.5, 280598105]
     const colorScale = d3.scaleThreshold()
         .domain(deciles)
         .range(["#D4ECFF",
@@ -104,8 +97,8 @@
             "#005C99",
             "#00467D"]);
 
-    // Legend
-    const legendWidth = 400; // Adjust the width of the legend
+    //#region LEGEND
+    const legendWidth = 500; // Adjust the width of the legend
     const legendHeight = 8;
     const tickWidth = legendWidth / (colorScale.range().length - 1); // Calculate the width between ticks
 
@@ -123,34 +116,29 @@
         .attr("height", legendHeight)
         .style("fill", d => d);
 
-    // Create a custom format for tick labels (in thousands)
-    const formatTick = d3.formatPrefix(",.0", 1e3);
-
     // Create tick labels
     legendSvg.selectAll("text")
         .data(colorScale.domain())
         .enter().append("text")
         .text(d => formatTick(d)) // Format the tick labels
         .attr("x", (d, i) => i * tickWidth + 5) //+ tickWidth / 2
-        .attr("y", legendHeight + 10)
-        .attr("text-anchor", "end")
-        .attr("font-size", "smaller");
+        .attr("y", legendHeight - 10)
+        .attr("text-anchor", "start")
+        .attr("font-size", "x-small");
 
     // Add a legend title
     legendSvg.append("text")
         .attr("class", "caption")
         .attr("x", 0)
-        .attr("y", -10) // Adjust the position of the legend title
+        .attr("y", 25) // Adjust the position of the legend title
         .attr("fill", "#000")
-        .attr("text-anchor", "start")
-        .attr("font-weight", "bold")
-        .text("Number of Immigrants (in thousands)");
-
+        .text("Number of Immigrants (in thousands)")
+        .attr("font-size", "smaller");
+    //#region LEGEND
 
     if (Object.keys(dataset).length === 0) loadData(selectedGender);
     function getValue(radio) {
         loadData(selectedGender = radio.value);
-        output.innerText = selectedGender ? `You selected ${selectedGender}` : `You haven't selected any gender`;
     }
 
     function drawMap(topo, selectedGender, year = 6) {
@@ -199,7 +187,7 @@
                 // console.log(d)
                 if (d.id == "TWN")
                     return `${d.properties.name}, China (${d.id})\n${d.total}`;
-                return `${d.properties.name} (${d.id})\n${d.total}`;
+                return `${d.properties.name} (${d.id})\n${formattedNumber(d.total)}`;
             });
 
     }
@@ -224,6 +212,8 @@
                 drawMap(topo, selectedGender);
             });
     }
+
+    //#region MOUSE
     let mouseOver = function (d) {
         d3.selectAll(".Country")
             .transition()
@@ -244,11 +234,12 @@
             .transition()
             .duration(200)
     }
+    //#endregion MOUSE
 
-    // region: Slider
+    //#region SLIDER
     var margin = { top: 50, right: 50, bottom: 0, left: 50 },
-        w = 960 - margin.left - margin.right,
-        h = 500 - margin.top - margin.bottom;
+        w = 300 - margin.left - margin.right,
+        h = 150 - margin.top - margin.bottom;
 
     var endDate = new Date();
 
@@ -257,9 +248,6 @@
         date.setDate(date.getDate() + days);
         return date;
     };
-
-    var targetValue = w;
-    var timer;
 
     endDate = endDate.addDays(10);
 
@@ -270,9 +258,10 @@
         .step(5)
         .width(w + margin.left + margin.right - 20)
         .tickValues(yearList)
-        .fill('#2196f3')
-        .default(yearList[yearList.length - 1]) //Date.now()
-        .handle(d3.symbol().type(d3.symbolCircle).size(200)()) // size of slider dragger
+        .tickFormat(formatYear)
+        .fill('#00467D')
+        .default(yearList[yearList.length - 1])
+        .handle(d3.symbol().type(d3.symbolCircle).size(100)()) // size of slider dragger
         .on("onchange", function (val) {
             d3.select("h1").html("Total Immigrants by Country in Asia<br/>" + val);
             drawMap(topo, selectedGender, (val - 1990) / 5)
@@ -281,13 +270,13 @@
     var gTime = d3
         .select("div#slider")
         .append("svg")
-        .attr("width", 1000)
+        .attr("width", 500)
         .attr("height", 100)
         .append("g")
         .attr("transform", "translate(30,30)");
 
     gTime.call(sliderTime);
-
+    //#endregion SLIDER
 </script>
 
 </html>
