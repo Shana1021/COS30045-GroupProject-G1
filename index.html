@@ -75,6 +75,30 @@
     
         <section>
             <div class="block">
+                <p><span class="capital four">L</span>orem ipsum dolor sit amet, 
+                    consectetur adipiscing elit. Nulla ullamcorper iaculis facilisis. 
+                    Phasellus nec condimentum massa.</p>
+
+                <p class="margin-top-10">
+
+                <!-- Call chart -->
+                <p id="chart4"></p>
+                <!-- Create radio buttons for selecting chart mode (stacked or grouped) -->
+                <form>
+                    <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
+                    <label><input type="radio" name="mode" value="grouped"> Grouped</label>
+                </form>
+                <!-- Create a div element for the tooltip -->
+                <div class="tooltip"></div>
+                <!-- Create a legend element -->
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #4FA05C;"></div> Emmigrants
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #C7492F;"></div> Immigrants
+                    </div>
+                </div>
             </div>
         </section>
 
