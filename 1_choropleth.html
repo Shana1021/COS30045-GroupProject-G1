@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Total Immigrants by Country in Asia</title>
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <script src="https://unpkg.com/d3-simple-slider"></script>
+    <!-- <link rel="stylesheet" href="a.css" /> -->
+    <style>
+        .slider {
+            cursor: pointer;
+        }
+
+        .row {
+            display: flex;
+        }
+
+        .column {
+            flex: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrapper">
+        <div class="row">
+            <div class="column">
+                <div id="slider"></div>
+                <svg id="map" width="780" height="600"></svg>
+            </div>
+            <div class="column">
+                <h1></h1>
+                <!--#region gender -->
+                <div>
+                    <span>
+                        <input type="radio" name="gender" value="B" id="b" onchange="getValue(this)" checked>
+                        <label for="b">Both</label>
+                    </span>
+                    <span>
+                        <input type="radio" name="gender" value="F" id="f" onchange="getValue(this)">
+                        <label for="f">Female</label>
+                    </span>
+                    <span>
+                        <input type="radio" name="gender" value="M" id="m" onchange="getValue(this)">
+                        <label for="m">Male</label>
+                    </span>
+                </div>
+                <!--#endregion -->
+            </div>
+    </main>
+</body>
+
+<script>
+    var dataset = {
+        // AFG: {
+        //     both: Array(7) for [1990 till 2020's number of immigrants],
+        //     male: Array(7),
+        //     female: Array(7)
+        // }, ...50 more countries
+    };
+    let topo;
+
+    // Filter for Asian countries
+    var asia = [];
+
+    // Filter gender
+    let selectedGender = "B";
+
+    // p
+    const p = d3.select("#output");
+
+    // The svg
+    const svg = d3.select("#map"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height");
+
+    // Map and projection
+    const path = d3.geoPath();
+    const projection = d3.geoMercator()
+        .scale(350)
+        .center([0, 20])
+        .translate([width / 2 - 500, height / 2]);
+
+    // Data 
+    const data = new Map();
+
+    //#region FORMATTERs
+    const formatTick = d3.formatPrefix(",.0", 1e3);
+    const formattedNumber = (number) => number.toLocaleString();
+    const formatYear = (year) => year.toString();
+    //#endregion FORMATTERs
+
+    //Color scale    
+    const deciles = [0 /*added so 0 wont show up white */, 24774.5, 71522, 139773.5, 267922, 516920.5, 1050070, 1916439.5, 3632496, 9857625.5, 280598105]
+    const colorScale = d3.scaleThreshold()
+        .domain(deciles)
+        .range(["#D4ECFF",
+            "#B0DDFE",
+            "#8DD0F9",
+            "#6EC3F1",
+            "#54B6E7",
+            "#3BA8D9",
+            "#269AC9",
+            "#1487BD",
+            "#0571AD",
+            "#005C99",
+            "#00467D"]);
+
+    //#region LEGEND
+    const legendWidth = 500; // Adjust the width of the legend
+    const legendHeight = 8;
+    const tickWidth = legendWidth / (colorScale.range().length - 1); // Calculate the width between ticks
+
+    var legendSvg = svg
+        .append("g")
+        .attr("class", "legend") // create a group called 'key'
+        .attr("transform", "translate(120, 40)"); // move to 0,40
+
+    // Create color rectangles for the legend
+    legendSvg.selectAll("rect")
+        .data(colorScale.range())
+        .enter().append("rect")
+        .attr("x", (d, i) => i * tickWidth)
+        .attr("width", tickWidth)
+        .attr("height", legendHeight)
+        .style("fill", d => d);
+
+    // Create tick labels
+    legendSvg.selectAll("text")
+        .data(colorScale.domain())
+        .enter().append("text")
+        .text(d => formatTick(d)) // Format the tick labels
+        .attr("x", (d, i) => i * tickWidth + 5) //+ tickWidth / 2
+        .attr("y", legendHeight - 10)
+        .attr("text-anchor", "start")
+        .attr("font-size", "x-small");
+
+    // Add a legend title
+    legendSvg.append("text")
+        .attr("class", "caption")
+        .attr("x", 0)
+        .attr("y", 25) // Adjust the position of the legend title
+        .attr("fill", "#000")
+        .text("Number of Immigrants (in thousands)")
+        .attr("font-size", "smaller");
+    //#region LEGEND
+
+    if (Object.keys(dataset).length === 0) loadData(selectedGender);
+    function getValue(radio) {
+        loadData(selectedGender = radio.value);
+    }
+
+    function drawMap(topo, selectedGender, year = 6) {
+        svg.select("g.asia").remove();
+        for (const [key, value] of Object.entries(dataset)) {
+            console.log(key, value);
+            switch (selectedGender) {
+                case "M":
+                    data.set(key, dataset[key].male)
+                    break;
+                case "F":
+                    data.set(key, dataset[key].female)
+                    break;
+                default:
+                    data.set(key, dataset[key].both)
+            }
+        }
+
+        console.log(topo)
+        svg.append("g")
+            .attr("class", "asia") // create a group called 'asia' map
+            .selectAll("path")
+            .data(topo.features.filter(function (d) {
+                return asia.includes(d.id);
+            }))
+            .enter()
+            .append("path")
+            // draw each country
+            .attr("d", d3.geoPath()
+                .projection(projection)
+            )
+            // set the color of each country
+            .attr("fill", function (d) {
+                d.total = data.get(d.id)[year] || 0;
+                console.log(`${d.id} : ${selectedGender}, ${1990 + year * 5} year => ${d.total} `)
+                return colorScale(d.total);
+            })
+            .style("stroke", "#555")
+            .attr("class", function (d) { return "Country" })
+            .attr("transform", "translate(0, 100)")
+            .on("mouseover", mouseOver)
+            .on("mouseleave", mouseLeave)
+            //tooltip            
+            .append("title")
+            .text(function (d) {
+                // console.log(d)
+                if (d.id == "TWN")
+                    return `${d.properties.name}, China (${d.id})\n${d.total}`;
+                return `${d.properties.name} (${d.id})\n${formattedNumber(d.total)}`;
+            });
+
+    }
+
+    const yearList = [1990, 1995, 2000, 2005, 2010, 2015, 2020];
+
+    function loadData(selectedGender) { // Load external data and boot                  
+        Promise.all([
+            d3.json("countries.geojson"),
+            d3.csv("/data/a.csv", function (d) {
+                if (d.id) {
+                    asia.push(d.id); // set asian countries filter
+                    dataset[d.id] = {
+                        both: [+d.both1990, +d.both1995, +d.both2000, +d.both2005, +d.both2010, +d.both2015, +d.both2020],
+                        male: [+d.male1990, +d.male1995, +d.male2000, +d.male2005, +d.male2010, +d.male2015, +d.male2020],
+                        female: [+d.female1990, +d.female1995, +d.female2000, +d.female2005, +d.female2010, +d.female2015, +d.female2020]
+                    };
+                }
+            })]).then(function (loadData) {
+                topo = loadData[0]; // access geojson
+
+                drawMap(topo, selectedGender);
+            });
+    }
+
+    //#region MOUSE
+    let mouseOver = function (d) {
+        d3.selectAll(".Country")
+            .transition()
+            .duration(200)
+            .style("opacity", .5)
+        d3.select(this)
+            .transition()
+            .duration(200)
+            .style("opacity", 1)
+    }
+
+    let mouseLeave = function (d) {
+        d3.selectAll(".Country")
+            .transition()
+            .duration(200)
+            .style("opacity", 1)
+        d3.select(this)
+            .transition()
+            .duration(200)
+    }
+    //#endregion MOUSE
+
+    //#region SLIDER
+    var margin = { top: 50, right: 50, bottom: 0, left: 50 },
+        w = 300 - margin.left - margin.right,
+        h = 150 - margin.top - margin.bottom;
+
+    var endDate = new Date();
+
+    Date.prototype.addDays = function (days) {
+        var date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+    };
+
+    endDate = endDate.addDays(10);
+
+    var sliderTime = d3
+        .sliderBottom()
+        .min(yearList[0])
+        .max(yearList[yearList.length - 1])
+        .step(5)
+        .width(w + margin.left + margin.right - 20)
+        .tickValues(yearList)
+        .tickFormat(formatYear)
+        .fill('#00467D')
+        .default(yearList[yearList.length - 1])
+        .handle(d3.symbol().type(d3.symbolCircle).size(100)()) // size of slider dragger
+        .on("onchange", function (val) {
+            d3.select("h1").html(val);
+            drawMap(topo, selectedGender, (val - 1990) / 5)
+        });
+
+    var gTime = d3
+        .select("div#slider")
+        .append("svg")
+        .attr("width", 680)
+        .attr("height", 65)
+        .append("g")
+        .attr("transform", "translate(250,30)");
+
+    gTime.call(sliderTime);
+    //#endregion SLIDER
+</script>
+
+</html>

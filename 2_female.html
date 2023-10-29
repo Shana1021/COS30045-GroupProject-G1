@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    .axis--x path {
+        display: none;
+    }
+
+    .line {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 1.5px;
+    }
+</style>
+<h2>Female</h2>
+<svg id="f" width="500" height="400"></svg>
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script>
+    var svg = d3.select("#f"),
+        margin = { top: 20, right: 40, bottom: 30, left: 50 },
+        width = svg.attr("width") - margin.left - margin.right,
+        height = svg.attr("height") - margin.top - margin.bottom,
+        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var parseTime = d3.timeParse("%Y%m%d");
+
+    var x = d3.scaleTime().range([0, width - margin.right]),
+        y = d3.scaleLinear().range([height, 0]),
+        z = d3.scaleOrdinal(d3.schemeCategory10);
+
+    const makeLine = (xScale) => d3.line()
+        .curve(d3.curveBasis)
+        .x(function (d) { return xScale(d.year); })
+        .y(function (d) { return y(d.migrant); });
+
+    var line = d3.line()
+        .curve(d3.curveBasis)
+        .x(function (d) { return x(d.year); })
+        .y(function (d) { return y(d.migrant); });
+
+
+    d3.csv("/data/b.csv", function (d) {
+        return d;
+    }).then(function (data) {
+        // console.log(data)
+
+        let columns = ['sex', 'year', 'Central Asia', 'Eastern Asia', 'South-Eastern Asia', 'Southern Asia', 'Western Asia']
+        for (d of data) {  // make sure correct data types for: (1) year -> date, (2) migrants number -> number
+            d.year = new Date(d.year, 0, 1);
+            for (var i = 2, n = columns.length, c; i < n; ++i) // i = 2 means to start after 'year'
+                d[c = columns[i]] = +d[c];
+            console.log(d)
+        }
+        var regions = data.columns.slice(2).map(function (id) { //new array starting at 3th column
+            return {
+                id: id,
+                values: data
+                    .filter(function (d) {
+                        return d.sex === "Female";
+                    }).map(function (d) {
+                        return { year: d.year, migrant: d[id] };
+                    })
+            };
+        });
+        // console.log(regions)
+        x.domain(d3.extent(data, function (d) { return d.year; }));
+
+        y.domain([-685995, 30148030]);
+
+        z.domain(regions.map(function (c) { return c.id; }));
+
+        const x_axis = g.append("g")
+            .attr("class", "axis axis--x")
+            .attr("id", 'x_axis')
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+
+        var formatValue = d3.format(".2s");
+
+        //Draw axis
+        g.append("g")
+            .attr("class", "axis axis--y")
+            .call(d3.axisLeft(y).tickFormat(function (d) { return formatValue(d).replace('M', '').replace('.0', ''); }))
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", "0.71em")
+            .attr("fill", "#000")
+            .text("Migrant (million)");
+
+        var region = g.selectAll(".region")
+            .data(regions)
+            .enter().append("svg")
+            .attr("class", "region")
+            .attr("width", width - margin.right);
+
+
+        function hover(elem, d) {
+            var attrs = elem.srcElement.attributes;
+            let id = attrs['data-id'].value;
+            let path = region.select('#' + id);
+            if (path.attr('visibility') == 'hidden') {
+                return;
+            }
+            console.log(elem)
+            console.log(d)
+
+            region.selectAll('.line').style('stroke', d => {
+                let target_id = d.id.substring(0, 6).toUpperCase();
+                if (d.id.substring(0, 6).toUpperCase() == id) {
+                    return z(d.id)
+                } else {
+                    return '#eaeaea'
+                }
+            });
+        }
+
+        function exit(elem) {
+            var attrs = elem.srcElement.attributes;
+            let id = attrs['data-id'].value;
+            let path = region.select('#' + id);
+            if (path.attr('visibility') == 'hidden') {
+                return;
+            }
+            region.selectAll('.line').style('stroke', d => {
+                return z(d.id)
+            });
+        }
+
+        function click(elem) {
+            var attrs = elem.srcElement.attributes;
+
+            let id = attrs['data-id'].value;
+
+            let path = region.select('#' + id);
+            let visibility = path.attr('visibility');
+            if (visibility == 'visible') {
+                path.attr('visibility', 'hidden');
+                region.selectAll('.line').style('stroke', d => {
+                    return z(d.id)
+                });
+            } else {
+                path.attr('visibility', 'visible');
+                region.selectAll('.line').style('stroke', d => {
+                    let target_id = d.id.substring(0, 6).toUpperCase();
+                    if (d.id.substring(0, 6).toUpperCase() == id) {
+                        return z(d.id)
+                    } else {
+                        return '#eaeaea'
+                    }
+                });
+            }
+        }
+
+        const xAxis = (g, x) => g
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))
+
+        function zoomed(event) {
+            const xz = event.transform.rescaleX(x);
+            region.selectAll('.line').attr('d', function (d) { return makeLine(xz)(d.values); })
+            x_axis.call(xAxis, xz);
+        }
+
+        const zoom = d3.zoom()
+            .scaleExtent([1, 5])
+            .extent([[margin.left, 0], [width - margin.right, height]])
+            .translateExtent([[margin.left, -Infinity], [width - margin.right, Infinity]])
+            .on("zoom", zoomed);
+
+        svg.call(zoom)
+            .transition()
+            .duration(100)
+            .call(zoom.scaleTo, 1, [x(Date.UTC(2020, 1, 1)), 0]);
+
+        region.append("path")
+            .attr("class", "line")
+            .attr("d", function (d) { return line(d.values); })
+            .attr("id", d => d.id.substring(0, 6).toUpperCase())
+            .attr("data-id", d => d.id.substring(0, 6).toUpperCase())
+            .attr("visibility", "visible")
+            .style("stroke", function (d) { return z(d.id); })
+            .on("click", click)
+            .on("mouseover", hover)
+            .on("mouseout", exit);
+
+        svg.selectAll(".label")
+            .data(regions)
+            .enter()
+            .append("text")
+            .datum(function (d) { return { id: d.id, value: d.values[d.values.length - 1] }; })
+            .attr("class", "label")
+            .attr("transform", function (d) { return "translate(" + x(d.value.year) + "," + y(d.value.migrant) + ")"; })
+            .attr("x", 55)
+            .attr("y", 15)
+            .attr("dy", "0.35em")
+            .attr("data-id", d => d.id.substring(0, 6).toUpperCase())
+            .style("font", "10px sans-serif")
+            .text(function (d) { return d.id; })
+            .on("click", click)
+            .on("mouseover", hover)
+            .on("mouseout", exit);
+
+        var legend = svg.selectAll('g')
+            .data(regions)
+            .enter()
+            .append('g')
+            .attr('class', 'legend');
+
+        legend.append('rect')
+            .attr('x', width - 20)
+            .attr('y', function (d, i) {
+                return i * 20;
+            })
+            .attr('width', 10)
+            .attr('height', 10)
+            .style('fill', function (d) {
+                console.log(d)
+                return color(d.name);
+            });
+
+        legend.append('text')
+            .attr('x', width - 8)
+            .attr('y', function (d, i) {
+                return (i * 20) + 9;
+            })
+            .text(function (d) {
+                return d.name;
+            });
+    })
+</script>
