@@ -12,32 +12,43 @@
         .slider {
             cursor: pointer;
         }
+
+        .row {
+            display: flex;
+        }
+
+        .column {
+            flex: 50%;
+        }
     </style>
 </head>
 
 <body>
     <main class="wrapper">
-        <div class="content">
-            <h1>Total Immigrants by Country in Asia<br>1995 - 2020</h1>
-            <!--#region gender -->
-            <div>
-                <span>
-                    <input type="radio" name="gender" value="B" id="b" onchange="getValue(this)" checked>
-                    <label for="b">Both</label>
-                </span>
-                <span>
-                    <input type="radio" name="gender" value="F" id="f" onchange="getValue(this)">
-                    <label for="f">Female</label>
-                </span>
-                <span>
-                    <input type="radio" name="gender" value="M" id="m" onchange="getValue(this)">
-                    <label for="m">Male</label>
-                </span>
+        <div class="row">
+            <div class="column">
+                <div id="slider"></div>
+                <svg id="map" width="780" height="600"></svg>
             </div>
-            <!--#endregion -->
-            <div id="slider"></div>
-            <svg id="map" width="960" height="600"></svg>
-        </div>
+            <div class="column">
+                <h1></h1>
+                <!--#region gender -->
+                <div>
+                    <span>
+                        <input type="radio" name="gender" value="B" id="b" onchange="getValue(this)" checked>
+                        <label for="b">Both</label>
+                    </span>
+                    <span>
+                        <input type="radio" name="gender" value="F" id="f" onchange="getValue(this)">
+                        <label for="f">Female</label>
+                    </span>
+                    <span>
+                        <input type="radio" name="gender" value="M" id="m" onchange="getValue(this)">
+                        <label for="m">Male</label>
+                    </span>
+                </div>
+                <!--#endregion -->
+            </div>
     </main>
 </body>
 
@@ -70,7 +81,7 @@
     const projection = d3.geoMercator()
         .scale(350)
         .center([0, 20])
-        .translate([width / 2 - 580, height / 2]);
+        .translate([width / 2 - 500, height / 2]);
 
     // Data 
     const data = new Map();
@@ -105,7 +116,7 @@
     var legendSvg = svg
         .append("g")
         .attr("class", "legend") // create a group called 'key'
-        .attr("transform", "translate(10, 40)"); // move to 0,40
+        .attr("transform", "translate(120, 40)"); // move to 0,40
 
     // Create color rectangles for the legend
     legendSvg.selectAll("rect")
@@ -197,7 +208,7 @@
     function loadData(selectedGender) { // Load external data and boot                  
         Promise.all([
             d3.json("countries.geojson"),
-            d3.csv("a.csv", function (d) {
+            d3.csv("/data/a.csv", function (d) {
                 if (d.id) {
                     asia.push(d.id); // set asian countries filter
                     dataset[d.id] = {
@@ -263,17 +274,17 @@
         .default(yearList[yearList.length - 1])
         .handle(d3.symbol().type(d3.symbolCircle).size(100)()) // size of slider dragger
         .on("onchange", function (val) {
-            d3.select("h1").html("Total Immigrants by Country in Asia<br/>" + val);
+            d3.select("h1").html(val);
             drawMap(topo, selectedGender, (val - 1990) / 5)
         });
 
     var gTime = d3
         .select("div#slider")
         .append("svg")
-        .attr("width", 500)
-        .attr("height", 100)
+        .attr("width", 680)
+        .attr("height", 65)
         .append("g")
-        .attr("transform", "translate(30,30)");
+        .attr("transform", "translate(250,30)");
 
     gTime.call(sliderTime);
     //#endregion SLIDER

@@ -28,8 +28,8 @@
 
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="sankey.js"></script>
-    <h1>Female Immigrants Origins and Asian Region Destinations, 2020</h1>
-    <h2>Where are they from and where do they go?</h2>
+    <!-- <h1>Female Immigrants Origins and Asian Region Destinations, 2020</h1>
+    <h2>Where are they from and where do they go?</h2> -->
     <button id="reset">Reset</button>
     <script>
         var units = "Immigrants";
@@ -65,7 +65,7 @@
 
             var path = sankey.link();
 
-            d3.csv("c.csv", function (error, data) {
+            d3.csv("/data/c.csv", function (error, data) {
                 var filteredData;
                 if (nodeName == "All") {
                     filteredData = data;
