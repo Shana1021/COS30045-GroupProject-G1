@@ -1,0 +1,27 @@
+target,source,value
+Central America,Central Asia,2
+Central America,Eastern Asia,1
+Central America,Southern Asia,5
+Central Asia,Central Asia,52
+Eastern Africa,Western Asia,2
+Eastern Asia,Eastern Asia,32
+Eastern Asia,South-eastern Asia,9
+Eastern Asia,Southern Asia,4
+Europe,Central Asia,15
+Europe,Southern Asia,249
+Europe,Western Asia,264
+Mediterranean,Southern Asia,435
+Mediterranean,Western Asia,1714
+North America,Eastern Asia,4
+North America,South-eastern Asia,1
+North America,Southern Asia,8
+Northern Africa,Southern Asia,8
+Northern Africa,Western Asia,17
+South America,Southern Asia,24
+South-eastern Asia,Eastern Asia,36
+South-eastern Asia,South-eastern Asia,2018
+South-eastern Asia,Southern Asia,1002
+Southern Asia,South-eastern Asia,323
+Southern Asia,Southern Asia,2060
+Western Asia,Southern Asia,135
+Western Asia,Western Asia,362
