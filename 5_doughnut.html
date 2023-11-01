@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5_doughnut</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .slice {
+            transition: transform 0.2s;
+        }
+        .value {
+            font-size: 14px;
+        }
+        .timer {
+            font-size: 30px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            text-anchor: middle;
+            position: fixed;
+            top: 33%;
+            left: 29%;
+            transform: translate(-50%, -50%);
+            margin-top: 95px;
+        }
+        .chart-container {
+            position: relative;
+        }
+        .chart {
+            margin-top:50px;
+            margin-left: 10px;
+        }
+        .legend {
+            position: fixed;
+            top: 20px;
+            left: 463px;
+            background: #fff;
+            padding: 5px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            margin-left: 30px;
+        }
+        .legend-item {
+            margin: 5px 0;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        .legend-text {
+            display: inline-block;
+            font-size: 14px;
+            font-weight: bolder;
+        }
+    </style>
+</head>
+<body>
+    <div id="legend" class="legend"></div>
+    <div id="chart-container" class="chart-container">
+        <div id="chart" class="chart"></div>
+        <div id="timer" class="timer">2000</div>
+    </div>
+    <script>
+        const width = 450;
+        const height = 450;
+        const radius = Math.min(width, height) / 2;
+        const margin = 20; // Additional margin for better visibility
+        const yearRange = [2000, 2005, 2010, 2015, 2020]; // Update the years
+        let currentYear = yearRange[0];
+        let interval;
+
+        const svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", width + 2 * margin)
+            .attr("height", height + 2 * margin)
+            .append("g")
+            .attr("transform", `translate(${width / 2 + margin}, ${height / 2 + margin})`);
+
+        const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+        const dataFiles = ["/data/e.csv/2000.csv", "/data/e.csv/2005.csv", "/data/e.csv/2010.csv", "/data/e.csv/2015.csv", "/data/e.csv/2020.csv"];
+        let currentIndex = 0;
+
+        // Create a legend
+        const legend = d3.select("#legend");
+
+        // Function to update the chart
+        function updateChart(dataFile) {
+            d3.csv(dataFile).then(data => {
+                const pie = d3.pie()
+                    .value(d => d.values);
+
+                const arcs = pie(data);
+                const arc = d3.arc()
+                    .innerRadius(radius / 2)
+                    .outerRadius(radius);
+
+                svg.selectAll("path").remove();
+                svg.selectAll("text").remove();
+
+                const slices = svg.selectAll("path")
+                    .data(arcs)
+                    .enter()
+                    .append("path")
+                    .attr("d", arc)
+                    .attr("fill", d => color(d.data.key))
+                    .attr("class", "slice")
+                    .attr("stroke", "white")
+                    .attr("stroke-width", 2);
+
+                // Add text labels in the slices
+                const text = svg.selectAll("text")
+                    .data(arcs)
+                    .enter()
+                    .append("text")
+                    .attr("transform", d => `translate(${arc.centroid(d)})`)
+                    .attr("dy", "0.35em")
+                    .style("text-anchor", "middle")
+                    .style("font-weight", "bold") // Set the font weight to bold
+                    .style("font-size", "14px")   // Set the font size to your desired size
+                    .style("fill", "blakc")      // Set the text color to a suitable color
+                    .text(d => d.data.values)
+                    .attr("class", "value");
+
+                slices.on("mouseover", function (d) {
+                    d3.select(this).transition().duration(50).ease(d3.easeElasticInOut)
+                        .attr("transform", `scale(1.1)`);
+                })
+                .on("mouseout", function () {
+                    d3.select(this).transition().duration(50)
+                        .attr("transform", "scale(1)");
+                });
+
+                // Update the legend
+                updateLegend(data);
+            });
+        }
+
+        // Function to update the legend
+        function updateLegend(data) {
+            const legendItems = legend.selectAll(".legend-item")
+                .data(data, d => d.key);
+
+            legendItems.exit().remove();
+
+            const newItem = legendItems.enter()
+                .append("div")
+                .attr("class", "legend-item");
+
+            newItem.append("div")
+                .attr("class", "legend-color")
+                .style("background-color", d => color(d.key));
+
+            newItem.append("div")
+                .attr("class", "legend-text")
+                .text(d => d.key);
+        }
+
+        function updateYear(year) {
+    d3.select("#timer").text(year);
+    if (currentIndex >= dataFiles.length) {
+        currentIndex = 0;
+        currentYear = yearRange[0];
+    }
+    updateChart(dataFiles[currentIndex]);
+    currentIndex++;
+    if (currentYear + 5 > yearRange[yearRange.length - 1]) {
+        currentYear = yearRange[0]; // Reset to 2000 after reaching the last year
+    } else {
+        currentYear += 5; // Update the year by 5
+    }
+}
+
+        // Initial chart
+        updateYear(currentYear); // Start with the first dataset
+
+         // Function to start the automatic cycling
+         function startCycling() {
+            interval = setInterval(() => {
+                updateYear(currentYear);
+            }, 2000); // Keep the interval at 5000ms (5 seconds)
+        }
+
+        // Function to stop the cycling
+        function stopCycling() {
+            clearInterval(interval);
+        }
+
+        // Start the cycling when the page loads
+        startCycling();
+    </script>
+</body>
+</html>
+
