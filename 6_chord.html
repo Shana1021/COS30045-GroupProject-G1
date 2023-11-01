@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .container { 
+      display: flex;
+      justify-content: space-between;
+    }
+    .chart-container {
+      width:800px;
+    }
+    .legend-container {
+      width: 60%;
+      height: 500px;
+      padding-top: 10px;
+      padding-left: 0px;
+    }
+    .chart-viewport {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    .arc-label {
+      display: none; /* Initially hide the arc labels */
+    }
+    .button{
+      margin-top: 100px;
+      margin-bottom: 5px;
+    }
+  </style>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="chart-container" id="chart-container">
+      <div class="chart-viewport" id="chart-viewport">
+        <!-- Your chart will be contained within this viewport -->
+      </div>
+    </div>
+    <div>
+    <button class="button" id="reset-button">Reset Chart</button>
+    <div id="buttons">
+      <button id="csv1">Female</button>
+      <button id="csv2">Male</button>
+      <button id="csv3">Unknown</button>
+    </div>
+    <div class="legend-container" id="legend-container"></div>
+  </div> 
+</div>
+  <div id="tooltip" style="position: absolute; display: none; background: #000000b2; padding: 5px; border: 1px solid #ccc; color: #ffffff;"></div>
+
+   <!-- Add the Reset button -->
+  
+
+  <script>
+     // Initialize the chord diagram with a placeholder selection
+     let currentChord = d3.select("#chart-viewport").append("g");
+        let currentDataFile = "/data/f.csv/female.csv";
+
+   // Function to update the chord diagram with new data
+function updateChordDiagram(dataFile) {
+  // Add fade-out transition to the chart-container
+  d3.select("#chart-container")
+    .transition()
+    .delay(function(d,i){
+         return i * 100;
+     })
+     .duration(400)
+    .style("opacity", 0)
+    .on("end", function() {
+      // Once the fade-out transition is complete, update the chart data
+      d3.csv(dataFile).then(function (data) {
+        // Clear the existing chart and legend
+        clearChordDiagram();
+        clearLegend();
+
+        // Create and store the new chord diagram
+        currentDataFile = dataFile;
+        createChordDiagram(data);
+
+        // Add fade-in transition to the chart-container
+        d3.select("#chart-container")
+          .style("opacity", 0)
+          .transition()
+          .delay(function(d,i){
+         return i * 100;
+     })
+     .duration(400)
+          .style("opacity", 1);
+      });
+    });
+}
+
+        // Function to clear the chart
+        function clearChordDiagram() {
+            // Select the existing chart and remove it
+            d3.select("#chart-viewport").selectAll("*").remove();
+        }
+
+        // Function to clear the legend
+        function clearLegend() {
+            // Select the existing legend and remove it
+            d3.select("#legend-container").selectAll("*").remove();
+        }
+
+    function createChordDiagram(data) {
+      const width = 200;
+      const height = 200;
+      const topPadding = 30;
+      const innerRadius = (Math.min(width, height) - topPadding) * 0.4;
+      const outerRadius = innerRadius + 4;
+
+      const names = Array.from(new Set(data.flatMap(d => [d.source, d.target])));
+      const index = new Map(names.map((name, i) => [name, i]));
+
+      const matrix = Array.from(index, () => new Array(names.length).fill(0));
+      for (const { source, target, value } of data) {
+        matrix[index.get(source)][index.get(target)] += value;
+      }
+
+      const chord = d3.chordDirected()
+        .padAngle(0.02)
+        .sortSubgroups(d3.descending);
+
+      const arc = d3.arc()
+        .innerRadius(innerRadius)
+        .outerRadius(outerRadius);
+
+      const ribbon = d3.ribbonArrow()
+        .radius(innerRadius - 0.5)
+        .padAngle(0);
+
+
+      const colors = [
+            "#1f77b4",  // Caribbean
+            "#ff7f0e",  // Latin America / Caribbean
+            "#2ca02c",  // Middle Africa
+            "#d62728",  // South America
+            "#9467bd",  // Western Africa
+            "#8c564b",  // Central America
+            "#e377c2",  // Central Asia
+            "#7f7f7f",  // Eastern Africa
+            "#bcbd22",  // Eastern Asia
+            "#17becf",  // Europe
+            "#aec7e8",  // Mixed
+            "#ff9896",  // Northern America
+            "#98df8a",  // Southern Asia
+            "#c5b0d5",  // Sub-Saharan Africa
+            "#c49c94",  // Unknown
+            "#f7b6d2",  // Western Asia
+            "#dbdb8d",  // South-eastern Asia
+            "#1f77b4",  // Western / Southern Asia (Using the same color as Caribbean)
+            "#ff7f0e",  // Northern Africa
+            "#2ca02c",  // Mediterranean
+            "maroon",  // Oceania
+            "#8c564b",  // North America
+            "#c49c94",  // Southern Africa
+            ];
+
+      //To format and calculate the value, used in tooltip
+      const formatValue = x => `${x.toFixed(0)}`;
+
+      const svg = d3.select("#chart-viewport") // Select the viewport for chart
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", [-width / 2, -height / 2, width, height])
+        .style("width", "100%")
+        .style("height", "auto")
+        .style("font", "3.5px sans-serif");
+
+      const chords = chord(matrix);
+
+      const textId = "uniqueId";
+
+      const tooltip = d3.select("#tooltip");
+
+
+      //For the Legend
+      const legendContainer = d3.select("#legend-container")
+        .append("svg")
+        .attr("width", "100%")
+        .attr("height", "100%");
+
+      const legendGroup = legendContainer
+        .append("g")
+        .selectAll("g")
+        .data(names)
+        .enter()
+        .append("g")
+        .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+      legendGroup
+        .append("rect")
+        .attr("width", 12)
+        .attr("height", 12)
+        .attr("fill", (d, i) => colors[i]);
+
+      legendGroup
+        .append("text")
+        .attr("x", 20)
+        .attr("y", 6)
+        .attr("dy", "0.35em")
+        .text(d => d);
+
+      svg.append("path")
+        .attr("id", textId)
+        .attr("fill", "none")
+        .attr("d", d3.arc()({ outerRadius, startAngle: 0, endAngle: 2 * Math.PI }));
+
+      //For arcs 
+      const arcGroup = svg.append("g")
+        .selectAll()
+        .data(chords.groups)
+        .enter()
+        .append("g");
+
+      arcGroup.append("path")
+        .attr("d", arc)
+        .attr("fill", d => colors[d.index])
+        .attr("stroke", "white")
+        .attr("stroke-width", 0.2)
+        .on("mouseover", showArcTooltip)
+       .on("mouseout", hideTooltip);
+
+      //For ribbons
+      const ribbonGroup = svg.append("g")
+        .selectAll()
+        .data(chords)
+        .enter()
+        .append("g");
+
+      ribbonGroup.append("path")
+        .attr("d", ribbon)
+        .attr("fill", d => colors[d.target.index])
+        .style("mix-blend-mode", "multiply")
+        .attr("stroke", d => colors[d.target.index])
+        .attr("stroke-width", 0.2)
+        .on("mouseover", showRibbonTooltip)
+        .on("mouseout", hideTooltip);
+
+    //For arc labels
+    const arcLabels = arcGroup.append("text")
+      .attr("class", "arc-label")
+      .attr("dy", -3)
+      .append("textPath")
+      .attr("xlink:href", "#" + textId)
+      .attr("startOffset", d => d.startAngle * outerRadius)
+      .text(d => names[d.index]);
+
+    arcGroup.on("mouseover", function() {
+      const label = d3.select(this).select(".arc-label");
+      label.style("display", "block"); // Show the label on arc hover
+    });
+
+    arcGroup.on("mouseout", function() {
+      const label = d3.select(this).select(".arc-label");
+      label.style("display", "none"); // Hide the label on arc mouseout
+    });
+
+
+    // Create a variable to keep track of the currently hovered arc index
+    let hoveredArcIndex = null;
+
+    //To show arc tooltip and visibility
+      function showArcTooltip(event, d) {
+          // Get the index of the currently hovered arc
+          hoveredArcIndex = d.index;
+
+        // Dim all ribbons
+        ribbonGroup.style("opacity", 0);
+
+        // Highlight the ribbons attached to the hovered arc
+        ribbonGroup.filter(ribbon => ribbon.source.index === hoveredArcIndex || ribbon.target.index === hoveredArcIndex)
+          .style("opacity", 1);
+
+        const outgoingValue = d3.sum(chords, c => (c.source.index === d.index ? c.target.value : 0));
+        tooltip.style("display", "block")
+          .html(`Total Deaths and Missing from ${names[d.index]} is ${formatValue(outgoingValue)}.`)
+         .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 30) + "px");
+      }
+
+      //To show ribbon tooltip
+      function showRibbonTooltip(event, d) {
+        tooltip.style("display", "block")
+          .html(`Source Region: ${names[d.source.index]}<br>Target Region: ${names[d.target.index]}<br>Value: ${formatValue(d.source.value)}`)
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 30) + "px");
+      }
+
+      //To reset both, mouseout
+      function hideTooltip() {
+        // Reset the opacity of all ribbons to normal
+      //ribbonGroup.style("opacity", 1);
+      tooltip.style("display", "none");
+      hoveredArcIndex = null;
+      }
+
+      d3.select("#chart-container")
+        .style("max-width", "800px")
+        .style("max-height", "800px")
+        .style("margin", "0 auto");
+
+     // Add an event listener to the Reset button
+     document.getElementById("reset-button").addEventListener("click", resetChart);
+
+function resetChart() {
+  d3.selectAll(".arc-label").style("display", "none"); // Hide all arc labels
+      ribbonGroup.style("opacity", 1); // Reset ribbon opacity
+      tooltip.style("display", "none"); // Hide the tooltip
+      hoveredArcIndex = null;
+}
+
+ // Store the new chord diagram
+ currentChord = chords; // Adjust this line if 'chords' has a different name
+    }
+
+    // Event listeners for the data buttons
+    document.getElementById("csv1").addEventListener("click", function() {
+      if (currentDataFile !== "/data/f.csv/female.csv") {
+        updateChordDiagram("/data/f.csv/female.csv");
+      }
+    });
+
+    document.getElementById("csv2").addEventListener("click", function() {
+      if (currentDataFile !== "/data/f.csv/male.csv") {
+        updateChordDiagram("/data/f.csv/male.csv");
+      }
+    });
+
+    document.getElementById("csv3").addEventListener("click", function() {
+      if (currentDataFile !== "/data/f.csv/unknown.csv") {
+        updateChordDiagram("/data/f.csv/unknown.csv");
+      }
+    });
+
+    // Initialize the chord diagram with the default data
+    updateChordDiagram(currentDataFile);
+  </script>
+</body>
+</html>
