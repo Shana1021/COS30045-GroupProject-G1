@@ -20,6 +20,14 @@
         .column {
             flex: 50%;
         }
+
+        .wrapper {
+            margin-top: 150px;
+        }
+
+        #gender-group {
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -27,13 +35,8 @@
     <main class="wrapper">
         <div class="row">
             <div class="column">
-                <div id="slider"></div>
-                <svg id="map" width="780" height="600"></svg>
-            </div>
-            <div class="column">
-                <h1></h1>
                 <!--#region gender -->
-                <div>
+                <div id="gender-group">
                     <span>
                         <input type="radio" name="gender" value="B" id="b" onchange="getValue(this)" checked>
                         <label for="b">Both</label>
@@ -48,6 +51,24 @@
                     </span>
                 </div>
                 <!--#endregion -->
+                <div id="slider"></div>
+                <svg id="map" width="950" height="700"></svg>
+            </div>
+            <div class="column">
+                <h1>2020</h1>
+                <p>
+                <ul>
+                    <li>In the early years, the majority of international migrants in Asia were males, with a
+                        significant concentration in countries like India, China, and Pakistan.
+                    </li>
+                    <li>As time progressed, there was a noticeable increase in female migrants, particularly in
+                        countries such as the Philippines, Indonesia, and Vietnam.</li>
+                    <li>
+                        The chart indicates a gradual shift towards a more balanced distribution of male and female
+                        migrants in recent years, with countries like Japan, South Korea, and Malaysia showing
+                        significant contributions from both genders.</li>
+                </ul>
+                </p>
             </div>
     </main>
 </body>
@@ -79,9 +100,9 @@
     // Map and projection
     const path = d3.geoPath();
     const projection = d3.geoMercator()
-        .scale(350)
+        .scale(400)
         .center([0, 20])
-        .translate([width / 2 - 500, height / 2]);
+        .translate([width / 2 - 600, height / 2 - 50]);
 
     // Data 
     const data = new Map();
@@ -116,7 +137,7 @@
     var legendSvg = svg
         .append("g")
         .attr("class", "legend") // create a group called 'key'
-        .attr("transform", "translate(120, 40)"); // move to 0,40
+        .attr("transform", "translate(200, 35)"); // move to 200,35
 
     // Create color rectangles for the legend
     legendSvg.selectAll("rect")
@@ -284,7 +305,7 @@
         .attr("width", 680)
         .attr("height", 65)
         .append("g")
-        .attr("transform", "translate(250,30)");
+        .attr("transform", "translate(340,30)");
 
     gTime.call(sliderTime);
     //#endregion SLIDER
