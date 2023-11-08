@@ -228,7 +228,10 @@
                 }
             });
         }
-        document.getElementById("reset").onclick = function () { loadData("All") };
+        document.getElementById("reset").onclick = function () {
+            loadData("All");
+            d3.select("#region").html("Overview");
+        };
     </script>
 
 </body>
