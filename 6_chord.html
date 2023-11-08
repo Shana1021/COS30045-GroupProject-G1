@@ -5,9 +5,11 @@
     .container { 
       display: flex;
       justify-content: space-between;
+      height:600px;
     }
     .chart-container {
       width:800px;
+      padding:20px;
     }
     .legend-container {
       width: 60%;
@@ -18,7 +20,6 @@
     .chart-viewport {
       width: 100%;
       height: 100%;
-      overflow: hidden;
     }
     .arc-label {
       display: none; /* Initially hide the arc labels */
@@ -34,12 +35,13 @@
   <div class="container">
     <div class="chart-container" id="chart-container">
       <div class="chart-viewport" id="chart-viewport">
-        <!-- Your chart will be contained within this viewport -->
+        <!-- Chart will be contained within this viewport -->
       </div>
     </div>
     <div>
     <button class="button" id="reset-button">Reset Chart</button>
     <div id="buttons">
+      <button id="csv">Total</button>
       <button id="csv1">Female</button>
       <button id="csv2">Male</button>
       <button id="csv3">Unknown</button>
@@ -55,7 +57,7 @@
   <script>
      // Initialize the chord diagram with a placeholder selection
      let currentChord = d3.select("#chart-viewport").append("g");
-        let currentDataFile = "/data/f.csv/female.csv";
+        let currentDataFile = "/data/f.csv/total-death-and-missing.csv";
 
    // Function to update the chord diagram with new data
 function updateChordDiagram(dataFile) {
@@ -104,11 +106,11 @@ function updateChordDiagram(dataFile) {
         }
 
     function createChordDiagram(data) {
-      const width = 200;
-      const height = 200;
+      const width = 400;
+      const height = 400;
       const topPadding = 30;
       const innerRadius = (Math.min(width, height) - topPadding) * 0.4;
-      const outerRadius = innerRadius + 4;
+      const outerRadius = innerRadius + 8;
 
       const names = Array.from(new Set(data.flatMap(d => [d.source, d.target])));
       const index = new Map(names.map((name, i) => [name, i]));
@@ -243,6 +245,7 @@ function updateChordDiagram(dataFile) {
     const arcLabels = arcGroup.append("text")
       .attr("class", "arc-label")
       .attr("dy", -3)
+      .style("font-size", "8px") // Increase the font size
       .append("textPath")
       .attr("xlink:href", "#" + textId)
       .attr("startOffset", d => d.startAngle * outerRadius)
@@ -299,8 +302,7 @@ function updateChordDiagram(dataFile) {
 
       d3.select("#chart-container")
         .style("max-width", "800px")
-        .style("max-height", "800px")
-        .style("margin", "0 auto");
+        .style("max-height", "800px");
 
      // Add an event listener to the Reset button
      document.getElementById("reset-button").addEventListener("click", resetChart);
@@ -317,15 +319,22 @@ function resetChart() {
     }
 
     // Event listeners for the data buttons
+    document.getElementById("csv").addEventListener("click", function() {
+      if (currentDataFile !== "/data/f.csv/total-death-and-missing.csv") {
+        updateChordDiagram("/data/f.csv/total-death-and-missing.csv");
+      }
+    });
+
+    // Event listeners for the data buttons
     document.getElementById("csv1").addEventListener("click", function() {
       if (currentDataFile !== "/data/f.csv/female.csv") {
-        updateChordDiagram("/data/f.csv/female.csv");
+        updateChordDiagram("/data/f.csv/females.csv");
       }
     });
 
     document.getElementById("csv2").addEventListener("click", function() {
       if (currentDataFile !== "/data/f.csv/male.csv") {
-        updateChordDiagram("/data/f.csv/male.csv");
+        updateChordDiagram("/data/f.csv/males.csv");
       }
     });
 
