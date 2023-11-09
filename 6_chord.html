@@ -2,57 +2,99 @@
 <html>
 <head>
   <style>
-    .container { 
-      display: flex;
-      justify-content: space-between;
-      height:600px;
+     .wrapper {
+        margin-top: 150px;
+        text-align: center;
     }
-    .chart-container {
-      width:800px;
-      padding:20px;
+
+    .row {
+        display: flex;
     }
+
+    .column {
+        flex: 50%;
+    }
+
+    .column-2{
+        flex: 50%;
+        padding-left: 80px;
+    }
+
     .legend-container {
       width: 60%;
       height: 500px;
       padding-top: 10px;
       padding-left: 0px;
     }
-    .chart-viewport {
-      width: 100%;
-      height: 100%;
-    }
+    
     .arc-label {
       display: none; /* Initially hide the arc labels */
     }
-    .button{
-      margin-top: 100px;
-      margin-bottom: 5px;
+
+    .button-top{
+    margin-top: 20px;
+    margin-bottom: 5px;
+    background-color: #f2f2f2;
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+
+    .button {
+    margin-bottom: 5px;
+    background-color: #f2f2f2;
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+    .button:hover, .button-top:hover {
+        background-color: #f0a705;
+        color: white;
     }
   </style>
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="chart-container" id="chart-container">
-      <div class="chart-viewport" id="chart-viewport">
-        <!-- Chart will be contained within this viewport -->
-      </div>
+  <div class="wrapper">
+    <h2>Female Emigrants (Asian origin) and Immigrants (Asian destination) share in the year 2020 </h2>
+    <div class="row">
+    <div class="column">
+            <!-- Chart SVG -->
+            <div class="chart-container" id="chart-container">
+              <div class="chart-viewport" id="chart-viewport">
+                <!-- Chart will be contained within this viewport -->
+              </div>
+            </div>
     </div>
-    <div>
-    <button class="button" id="reset-button">Reset Chart</button>
-    <div id="buttons">
-      <button id="csv">Total</button>
-      <button id="csv1">Female</button>
-      <button id="csv2">Male</button>
-      <button id="csv3">Unknown</button>
+        <div class="column-2">
+          <div>
+            <button class="button-top" id="reset-button">Reset Chart</button>
+            <div id="buttons">
+              <button class="button" id="csv">Total</button>
+              <button class="button" id="csv1">Female</button>
+              <button class="button" id="csv2">Male</button>
+              <button class="button" id="csv3">Unknown</button>
+            </div>
+          </div> 
+            <h2>Regional Disparities in Female Emigration.</h2>
+            <p>The observation that more female migrants are leaving Asia, particularly from the Southern and 
+                South-Eastern regions, suggests potential economic or social factors influencing their decisions 
+                to migrate. Economic opportunities, educational pursuits, or employment prospects may be contributing to this trend.</p>
+            <h2>Female Migration Preferences for Western Asia </h2>
+            <p></p>The higher preference of female migrants for Western Asia might indicate the presence of 
+            specific opportunities, such as job markets, industries, or societal conditions that attract women 
+            to this region. Cultural factors, like acceptance and empowerment of women, could also play a role.</p>
+            <h2>Southern Asia consists of High Female Emmigrants</h2>
+            <p>Southern Asia's prominence in female emigration underlines the region's 
+                significant role in the overall gendered migration landscape.  The prevalence of emigration 
+                in this region suggests a complex interplay of push and pull factors, where economic opportunities 
+                abroad or social considerations could be influencing women's decisions to seek opportunities beyond their home countries</p>
+        </div>
     </div>
-    <div class="legend-container" id="legend-container"></div>
-  </div> 
 </div>
-  <div id="tooltip" style="position: absolute; display: none; background: #000000b2; padding: 5px; border: 1px solid #ccc; color: #ffffff;"></div>
-
-   <!-- Add the Reset button -->
-  
+<div id="tooltip" style="position: absolute; display: none; background: #000000b2; padding: 5px; border: 1px solid #ccc; color: #ffffff;"></div>
 
   <script>
      // Initialize the chord diagram with a placeholder selection
@@ -106,8 +148,8 @@ function updateChordDiagram(dataFile) {
         }
 
     function createChordDiagram(data) {
-      const width = 400;
-      const height = 400;
+      const width = 450;
+      const height = 450;
       const topPadding = 30;
       const innerRadius = (Math.min(width, height) - topPadding) * 0.4;
       const outerRadius = innerRadius + 8;
