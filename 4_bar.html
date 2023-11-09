@@ -6,65 +6,149 @@
     <!-- Include D3.js library for data visualization -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-        /* Define the tooltip style */
-        .tooltip {
-            position: absolute;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 5px;
-            border-radius: 5px;
-            pointer-events: none;
-            opacity: 0;
-        }
-        /* Define legend style */
-        .legend {
-            float: left;
-            margin-top: 50px;
-            padding-left: 20px;
-        }
-        .legend-item {
-            margin-bottom: 20px;
-        }
-        .legend-color {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            margin-right: 5px;
-        }
+    .wrapper {
+        margin-top: 150px;
+        text-align: center;
+    }
+
+    .row {
+        display: flex;
+    }
+
+    .column {
+        flex: 50%;
+    }
+
+    .column-2{
+        flex: 50%;
+        padding-left: 50px;
+    }
+
+    /* Define the tooltip style */
+    .tooltip {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 5px;
+        border-radius: 5px;
+        pointer-events: none;
+        opacity: 0;
+    }
+
+    /* Define legend style */
+    .legend {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-top: 5px;
+        padding-left: 280px;
+    }
+
+    .legend-item {
+        margin-right: 20px;
+    }
+
+    .legend-color {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+    }
+
+    /* Style for the radio buttons */
+    form {
+        text-align: left;
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    /* Style for the radio button container */
+    form label {
+        display: inline-block;
+        margin-bottom: -1px;
+        cursor: pointer;
+    }
+
+    /* Style for the radio buttons */
+    form input[type="radio"] {
+        display: none; /* Hide the actual radio buttons */
+    }
+
+    /* Style for the tab appearance */
+    form label {
+        background-color: #f2f2f2;
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    form input[type="radio"]:checked + label{
+        background-color: #f0a705;
+            border-bottom: 10px solid white;
+    }
+
+    /* Add some hover effects */
+    form label:hover {
+        background-color:#f0a705;
+        color: white;
+    }
     </style>
 </head>
 <body>
-    <h2>Percentage of Female Emigrants (Asian origin) and Immigrants (Asian destination) share in the year 2020 </h2>
-    <h5>shows that more female are leaving Asia, highestly South – East region.</h5>
- 
-    <!-- Create radio buttons for selecting chart mode (stacked or grouped) -->
-    <form>
-        <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
-        <label><input type="radio" name="mode" value="grouped"> Grouped</label>
-    </form>
-    <!-- Create a div element for the tooltip -->
-    <div class="tooltip"></div>
-    <!-- Create a legend element -->
-    <div class="legend">
-        <div class="legend-item">
-            <div class="legend-color" style="background-color: #4FA05C;"></div> Emmigrants
-        </div>
-        <div class="legend-item">
-            <div class="legend-color" style="background-color: #C7492F;"></div> Immigrants
+    <div class="wrapper">
+        <div class="row">
+            <div class="column">
+                <h2>Female Emigrants (Asian origin) and Immigrants (Asian destination) share in the year 2020 </h2>
+                 <!-- Radio buttons for selecting chart mode (stacked or grouped) -->
+                    <form>
+                        <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
+                        <label><input type="radio" name="mode" value="grouped"> Grouped</label>
+                    </form>
+                <!-- Chart SVG -->
+                <svg id="body" width="800" height="400"></svg>
+
+                <!-- Create a legend element -->
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #4FA05C;"></div> Emmigrants
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #C7492F;"></div> Immigrants
+                    </div> 
+                </div>
+            </div>
+            <div class="column-2">
+                <h2>Regional Disparities in Female Emigration.</h2>
+                <p>The observation that more female migrants are leaving Asia, particularly from the Southern and 
+                    South-Eastern regions, suggests potential economic or social factors influencing their decisions 
+                    to migrate. Economic opportunities, educational pursuits, or employment prospects may be contributing to this trend.</p>
+                <h2>Female Migration Preferences for Western Asia </h2>
+                <p></p>The higher preference of female migrants for Western Asia might indicate the presence of 
+                specific opportunities, such as job markets, industries, or societal conditions that attract women 
+                to this region. Cultural factors, like acceptance and empowerment of women, could also play a role.</p>
+                <h2>Southern Asia consists of High Female Emmigrants</h2>
+                <p>Southern Asia's prominence in female emigration underlines the region's 
+                    significant role in the overall gendered migration landscape.  The prevalence of emigration 
+                    in this region suggests a complex interplay of push and pull factors, where economic opportunities 
+                    abroad or social considerations could be influencing women's decisions to seek opportunities beyond their home countries</p>
+            </div>
         </div>
     </div>
+    <div class="tooltip"></div>
+
     <script>
         // Define chart dimensions and margins
-        var w = 700;
-        var h = 350;
-        var margin = { top: 14.5, right: 30, bottom: 50, left: 150 };
+        var w = 800;
+        var h = 400;
+        var margin = { top: 14.5, right: 30, bottom: 50, left: 70 };
 
         var width = w - margin.left - margin.right;
         var height = h - margin.top - margin.bottom;
         var duration = 800;
 
         // Create an SVG element to contain the chart
-        var svg = d3.select("body")
+        var svg = d3.select("#body")
             .append("svg")
             .attr("width", w)
             .attr("height", h);
@@ -111,7 +195,7 @@
                 .append("g")
                 .attr("fill", function (d) { return color(d.key); });
 
-            // Create individual bars within grouped bars
+             // Create individual bars within grouped bars
             var rect = grouped.selectAll("rect")
                 .data(function (d) { return d; })
                 .enter()
@@ -120,7 +204,7 @@
                 .attr("y", function (d) { return y(d[1]); })
                 .attr("height", function (d) { return y(d[0]) - y(d[1]); })
                 .attr("width", x0.bandwidth())
-                .attr("title", function (d) { return (d[1] - d[0]).toFixed(2) + '%'; }) // Round to 2 decimal places
+                .attr("title", function (d) { return d[1] - d[0]; }) // Actual value
 
             // Add x-axis label
             g.append("text")
@@ -139,18 +223,23 @@
                 .attr("transform", "rotate(-90)")
                 .text("Percentage");
 
-            // Create a linear scale for the percentage axis
-            var percentageScale = d3.scaleLinear()
-                .domain([0, 100])
-                .range([height, -10]);
+          // Define y-axis scale for the percentage values
+            var y = d3.scaleLinear()
+                .domain([0, d3.max(data, function (d) {
+                    return d3.max(keys, function (key) {
+                        return +d[key];
+                    });
+                })])
+                .nice()
+                .range([height, 0]);
 
-            // Add percentage axis
-            var percentageAxis = d3.axisLeft(percentageScale)
-                .tickFormat(function (d) { return d + "%"; });
-
+            // Add y-axis
             g.append("g")
                 .attr("class", "y axis")
-                .call(percentageAxis);
+                .call(d3.axisLeft(y)
+                    .tickFormat(function (d) {
+                        return d / 1000000 + "M";
+                    }));
 
             // Add x-axis
             g.append("g")
@@ -161,15 +250,15 @@
             // Create and show the tooltip
             var tooltip = d3.select("body").select(".tooltip");
 
-            // Show tooltip on mouseover
-            rect.on("mouseover", function (event, d) {
-                var [x, y] = d3.pointer(event);
-                var percentage = (d[1] - d[0]).toFixed(2) + '%';
-                tooltip.style("opacity", 1);
-                tooltip.html(percentage)
-                    .style("left", (x + 260 ) + "px")
-                    .style("top", (y + 10) + "px");
-            });
+             // Show tooltip on mouseover
+                rect.on("mouseover", function (event, d) {
+                    var [x, y] = d3.pointer(event);
+                    var value = d[1] - d[0];
+                    tooltip.style("opacity", 1);
+                    tooltip.html(value.toFixed(0))// Round to the nearest million
+                       .style("left", (x + 50) + "px")
+                        .style("top", (y + 300) + "px");
+                });
 
             // Hide tooltip on mouseout
             rect.on("mouseout", function () {
@@ -201,6 +290,7 @@
                     .duration(duration)
                     .attr("y", function (d) { return y(d[1] - d[0]); })
                     .attr("height", function (d) { return y(0) - y(d[1] - d[0]); });
+
             }
 
             // Function to transition to stacked bar mode

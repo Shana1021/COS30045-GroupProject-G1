@@ -6,6 +6,24 @@
     <title>5_doughnut</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
+        .wrapper {
+            margin-top: 150px;
+            text-align: center;
+        }
+
+        .row {
+            display: flex;
+        }
+
+        .column {
+            flex: 50%;
+            padding-top: 80px;
+        }
+
+        .column-2{
+            flex: 50%;
+            padding-left: 300px;
+        }
         .slice {
             transition: transform 0.2s;
         }
@@ -17,8 +35,8 @@
             font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
             text-anchor: middle;
             position: fixed;
-            top: 33%;
-            left: 29%;
+            top: 45%;
+            left: 80.5%;
             transform: translate(-50%, -50%);
             margin-top: 95px;
         }
@@ -31,13 +49,13 @@
         }
         .legend {
             position: fixed;
-            top: 20px;
-            left: 463px;
+            top: 250px;
+            left: 580px;
             background: #fff;
             padding: 5px;
             border: 1px solid #ccc;
             margin-top: 20px;
-            margin-left: 30px;
+            margin-right: 10px;
         }
         .legend-item {
             margin: 5px 0;
@@ -56,10 +74,34 @@
     </style>
 </head>
 <body>
-    <div id="legend" class="legend"></div>
-    <div id="chart-container" class="chart-container">
-        <div id="chart" class="chart"></div>
-        <div id="timer" class="timer">2000</div>
+    <div class="wrapper">
+        <div class="row">
+            <div class="column">
+                <h2>Regional Disparities in Female Emigration.</h2>
+                <p>The observation that more female migrants are leaving Asia, particularly from the Southern and 
+                    South-Eastern regions, suggests potential economic or social factors influencing their decisions 
+                    to migrate. Economic opportunities, educational pursuits, or employment prospects may be contributing to this trend.</p>
+                <h2>Female Migration Preferences for Western Asia </h2>
+                <p></p>The higher preference of female migrants for Western Asia might indicate the presence of 
+                specific opportunities, such as job markets, industries, or societal conditions that attract women 
+                to this region. Cultural factors, like acceptance and empowerment of women, could also play a role.</p>
+                <h2>Southern Asia consists of High Female Emmigrants</h2>
+                <p>Southern Asia's prominence in female emigration underlines the region's 
+                    significant role in the overall gendered migration landscape.  The prevalence of emigration 
+                    in this region suggests a complex interplay of push and pull factors, where economic opportunities 
+                    abroad or social considerations could be influencing women's decisions to seek opportunities beyond their home countries</p>
+            </div>
+            <div class="column-2">
+                <h2>Asian Female Emigrants to destination country based on income level of countries over the years 2000
+                    to 2020.</h2>
+                 <!-- Radio buttons for selecting chart mode (stacked or grouped) -->
+                 <div id="chart-container" class="chart-container">
+                    <div id="chart" class="chart"></div>
+                    <div id="timer" class="timer">2000</div>
+                </div>
+                <div id="legend" class="legend"></div>
+            </div>
+        </div>
     </div>
     <script>
         const width = 450;
@@ -87,55 +129,54 @@
 
         // Function to update the chart
         function updateChart(dataFile) {
-            d3.csv(dataFile).then(data => {
-                const pie = d3.pie()
-                    .value(d => d.values);
+  d3.csv(dataFile).then(data => {
+    const pie = d3.pie()
+      .value(d => d.values);
 
-                const arcs = pie(data);
-                const arc = d3.arc()
-                    .innerRadius(radius / 2)
-                    .outerRadius(radius);
+    const arcs = pie(data);
+    const arc = d3.arc()
+      .innerRadius(radius / 2)
+      .outerRadius(radius);
 
-                svg.selectAll("path").remove();
-                svg.selectAll("text").remove();
+    svg.selectAll("path").remove();
+    svg.selectAll("text").remove();
 
-                const slices = svg.selectAll("path")
-                    .data(arcs)
-                    .enter()
-                    .append("path")
-                    .attr("d", arc)
-                    .attr("fill", d => color(d.data.key))
-                    .attr("class", "slice")
-                    .attr("stroke", "white")
-                    .attr("stroke-width", 2);
+    const slices = svg.selectAll("path")
+      .data(arcs)
+      .enter()
+      .append("path")
+      .attr("d", arc)
+      .attr("fill", d => color(d.data.key))
+      .attr("class", "slice")
+      .attr("stroke", "white")
+      .attr("stroke-width", 2);
 
-                // Add text labels in the slices
-                const text = svg.selectAll("text")
-                    .data(arcs)
-                    .enter()
-                    .append("text")
-                    .attr("transform", d => `translate(${arc.centroid(d)})`)
-                    .attr("dy", "0.35em")
-                    .style("text-anchor", "middle")
-                    .style("font-weight", "bold") // Set the font weight to bold
-                    .style("font-size", "14px")   // Set the font size to your desired size
-                    .style("fill", "blakc")      // Set the text color to a suitable color
-                    .text(d => d.data.values)
-                    .attr("class", "value");
+    // Add text labels in the slices as percentages
+    const text = svg.selectAll("text")
+      .data(arcs)
+      .enter()
+      .append("text")
+      .attr("transform", d => `translate(${arc.centroid(d)})`)
+      .attr("dy", "0.35em")
+      .style("text-anchor", "middle")
+      .style("font-weight", "bold")
+      .style("font-size", "14px")
+      .style("fill", "black")
+      .text(d => ((d.endAngle - d.startAngle) / (2 * Math.PI) * 100).toFixed(1) + "%") // Display as percentage
+      .attr("class", "value");
 
-                slices.on("mouseover", function (d) {
-                    d3.select(this).transition().duration(50).ease(d3.easeElasticInOut)
-                        .attr("transform", `scale(1.1)`);
-                })
-                .on("mouseout", function () {
-                    d3.select(this).transition().duration(50)
-                        .attr("transform", "scale(1)");
-                });
+    slices.on("mouseover", function (d) {
+      d3.select(this).transition().duration(50).ease(d3.easeElasticInOut)
+        .attr("transform", `scale(1.1)`);
+    })
+      .on("mouseout", function () {
+        d3.select(this).transition().duration(50)
+          .attr("transform", "scale(1)");
+      });
 
-                // Update the legend
-                updateLegend(data);
-            });
-        }
+    updateLegend(data); // Update the legend
+  });
+}
 
         // Function to update the legend
         function updateLegend(data) {

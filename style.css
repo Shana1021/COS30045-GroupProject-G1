@@ -250,32 +250,3 @@
     width: 290px;
   }
 }
-
-/* CHART 4 styles */
-/**************************/
-
-/* Define the tooltip style */
-#container .tooltip {
-  position: absolute;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
-  pointer-events: none;
-  opacity: 0;
-}
-/* Define legend style */
-#container .legend {
-  float: left;
-  margin-top: 50px;
-  padding-left: 20px;
-}
-#container .legend-item {
-  margin-bottom: 20px;
-}
-#container .legend-color {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  margin-right: 5px;
-}
