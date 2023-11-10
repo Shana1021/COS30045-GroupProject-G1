@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<link rel="stylesheet" href="style.css" />
 <style>
     .axis--x path {
         display: none;
@@ -10,8 +11,24 @@
         stroke: steelblue;
         stroke-width: 1.5px;
     }
+
+    h1 {
+        font-family: "Oswald", sans-serif;
+        font-size: 24px;
+        font-weight: 400;
+        text-transform: uppercase;
+        color: black;
+    }
+
+    label,
+    text {
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 400;
+        font-size: 11px;
+        line-height: 24px;
+    }
 </style>
-<h2>Difference (Male-Female)</h2>
+<h1>Difference (Male - Female)</h1>
 <svg id="f" width="600" height="535"></svg>
 <script src="d3/d3.v6.min.js"></script>
 <script>
@@ -194,7 +211,6 @@
             .attr("y", 15)
             .attr("dy", "0.35em")
             .attr("data-id", d => d.id.substring(0, 6).toUpperCase())
-            .style("font", "10px sans-serif")
             .text(function (d) { return d.id; })
             .on("click", click)
             .on("mouseover", hover)

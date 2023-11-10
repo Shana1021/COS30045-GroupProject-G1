@@ -7,8 +7,40 @@
     <title>Total Immigrants by Country in Asia</title>
     <script src="d3/d3.v6.min.js"></script>
     <script src="d3/d3-simple-slider.min.js"></script>
-    <!-- <link rel="stylesheet" href="a.css" /> -->
+    <link rel="stylesheet" href="style.css" />
     <style>
+        h1 {
+            font-family: "Oswald", sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            text-transform: uppercase;
+            color: black;
+            padding: 0;
+            margin: 0;
+        }
+
+        h2 {
+            font-family: "Oswald", sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+        }
+
+        p,
+        li {
+            font-family: "Source Sans Pro", sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 24px;
+        }
+
+        label,
+        text {
+            font-family: "Source Sans Pro", sans-serif;
+            font-weight: 400;
+            font-size: 11px;
+            line-height: 24px;
+        }
+
         .slider {
             cursor: pointer;
         }
@@ -22,11 +54,15 @@
         }
 
         .wrapper {
-            margin-top: 150px;
+            margin-top: 10%;
         }
 
         #gender-group {
             text-align: center;
+        }
+
+        footer {
+            margin-top: -5%;
         }
     </style>
 </head>
@@ -54,22 +90,38 @@
                 <div id="slider"></div>
                 <svg id="map" width="950" height="700"></svg>
             </div>
-            <div class="column">
-                <h1>2020</h1>
-                <p>
+            <div class="column" style="padding-top: 1%;">
+                <h1>Total Immigrants in 2020</h1>
+                <h2> Increased Immigration </h2>
+                <p>There has been a significant increase in the number of immigrants in Asia from 1990 to 2020,
+                    signifying the changing dynamics of the Asian region and the growing interconnectedness between
+                    nations.</p>
+                <h2>Regional Preferences</h2>
+                <!-- <p>The data also reveals specific regional preferences for certain countries. -->
                 <ul>
-                    <li>In the early years, the majority of international migrants in Asia were males, with a
-                        significant concentration in countries like India, China, and Pakistan.
-                    </li>
-                    <li>As time progressed, there was a noticeable increase in female migrants, particularly in
-                        countries such as the Philippines, Indonesia, and Vietnam.</li>
+                    <li><strong>Saudi Arabia</strong> consistently attracts the largest number of immigrants among all
+                        Asian countries, primarily from India, Indonesia, Pakistan, and Syria, which could be linked to
+                        job opportunities. </li>
+                    <li><strong>India</strong> has the second-largest number of immigrants among all Asian countries,
+                        with approximately 50% of them coming from Bangladesh. </li>
+                    <li><strong>Thailand</strong> receives immigrants from Myanmar, Laos, and Cambodia, indicating the
+                        influence of geographical proximity and regional integration on migration patterns.</li>
                     <li>
-                        The chart indicates a gradual shift towards a more balanced distribution of male and female
-                        migrants in recent years, with countries like Japan, South Korea, and Malaysia showing
-                        significant contributions from both genders.</li>
+                        <strong>Japan</strong> attracts migrants from China, Korea, and Vietnam, showcasing the
+                        importance of historical, cultural, and economic ties in shaping migration flows.
+                    </li>
                 </ul>
                 </p>
             </div>
+        </div>
+        <footer>
+            <p>
+                Starter Code Credits: <a href="https://observablehq.com/@d3/choropleth" target="_blank">Observable</a>
+                | Data Source: <a href="https://www.un.org/development/desa/pd/content/international-migrant-stock"
+                    target="_blank">United Nations</a>
+                | Modified by: CJM
+            </p>
+        </footer>
     </main>
 </body>
 
@@ -174,6 +226,13 @@
     }
 
     function drawMap(topo, selectedGender, year = 6) {
+        if (selectedGender == 'B')
+            d3.select("h1").html("Total" + " immigrants in " + (1990 + year * 5));
+        else if (selectedGender == 'F')
+            d3.select("h1").html("Female immigrants in " + (1990 + year * 5));
+        else if (selectedGender == 'M')
+            d3.select("h1").html("Male immigrants in " + (1990 + year * 5));
+
         svg.select("g.asia").remove();
         for (const [key, value] of Object.entries(dataset)) {
             console.log(key, value);
@@ -295,7 +354,6 @@
         .default(yearList[yearList.length - 1])
         .handle(d3.symbol().type(d3.symbolCircle).size(100)()) // size of slider dragger
         .on("onchange", function (val) {
-            d3.select("h1").html(val);
             drawMap(topo, selectedGender, (val - 1990) / 5)
         });
 

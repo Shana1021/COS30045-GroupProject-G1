@@ -1,7 +1,7 @@
-<!-- <h1>Immigrants by Asian Region, from 1990 to 2020</h1> -->
+<link rel="stylesheet" href="style.css" />
 <style>
     .wrapper {
-        margin-top: 150px;
+        margin-top: 10%;
         text-align: center;
     }
 
@@ -12,35 +12,61 @@
     .column {
         flex: 50%;
     }
+
+    h2 {
+        font-family: "Oswald", sans-serif;
+        font-size: 20px;
+        font-weight: 400;
+    }
+
+    p,
+    li {
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 24px;
+    }
+
+    footer {
+        margin-top: 2%;
+    }
 </style>
 <div class="wrapper">
     <div class="row">
-        <div class="column">
+        <div class="column" style="padding-left: 3%;">
             <div class="row">
-                <embed type="text/html" src="2_female.html" width="350" height="310">
+                <embed type="text/html" src="2_female.html" width="350" height="315">
             </div>
             <div class="row">
-                <embed type="text/html" src="2_male.html" width="350" height="310">
+                <embed type="text/html" src="2_male.html" width="350" height="315">
             </div>
         </div>
         <div class="column">
             <embed type="text/html" src="2_diff.html" width="610" height="650">
         </div>
-        <div class="column">
-            <h2>Western Asia stands out with a significant gender disparity in its immigrant population.</h2>
-            <p> Over the years, there has been an exponential increase in the number of male immigrants compared to
-                females in
-                this region.
+        <div class="column" style="padding-left: 5%;">
+
+            <h2>Western Asia Emerges as an Immigration Hub</h2>
+            <p> In contrast, in Western Asia, specifically in the oil-producing countries of the Gulf Cooperation
+                Council (GCC), the number of immigrants has increased significantly over the past two decades.
             </p>
+            <h2>Gender Imbalance in Western Asia</h2>
+            <p> This trend is attributed to the higher demand for male migrant labor in these countries, outpacing the
+                demand for female migrant labor. Temporary labor migration contracts are prevalent in the region,
+                leading to a situation where female family members rarely accompany male migrants. </p>
         </div>
     </div>
-    <div class="row">
-        This trend suggests that Western Asia has become a destination that attracts a larger number of
-        male
-        immigrants,
-        possibly due to factors such as employment opportunities or specific industries. The disproportionate
-        gender
-        composition in Western Asia raises questions about the underlying causes and implications of this
-        phenomenon.
+    <div class="row" style="padding-left: 3%; ">
+        <p style="text-align: center;"> In most regions, the number of male and female migrants in 2020 was roughly
+            equivalent, where the share of women and girls among all migrants was slightly less than 50 per cent.</p>
     </div>
+    <footer>
+        <p>
+            Starter Code Credits: <a href="https://gist.github.com/Simonl07/778eb635c34bd2158706ac72aecbc979"
+                target="_blank">GitHub</a>
+            | Data Source: <a href="https://www.un.org/development/desa/pd/content/international-migrant-stock"
+                target="_blank">United Nations</a>
+            | Modified by: CJM
+        </p>
+    </footer>
 </div>

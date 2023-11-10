@@ -1,7 +1,23 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<title>SANKEY Experiment</title>
+<link rel="stylesheet" href="style.css" />
 <style>
+    h1 {
+        font-family: "Oswald", sans-serif;
+        font-size: 24px;
+        font-weight: 400;
+        text-transform: uppercase;
+        color: black;
+        padding: 0;
+        margin: 0;
+    }
+
+    h2 {
+        font-family: "Oswald", sans-serif;
+        font-size: 20px;
+        font-weight: 400;
+    }
+
     .node rect {
         cursor: move;
         fill-opacity: .9;
@@ -35,10 +51,29 @@
     .column {
         flex: 50%;
     }
+
+    footer {
+        margin-top: -5%;
+    }
+
+    p,
+    li {
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 24px;
+    }
+
+    label,
+    text {
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 400;
+        /* font-size: 11px; */
+        line-height: 24px;
+    }
 </style>
 
 <body>
-
     <script src="d3/d3.v4.min.js"></script>
     <script src="sankey.js"></script>
     <div class="wrapper">
@@ -48,15 +83,28 @@
                 <p id="sankey"></p>
             </div>
             <div class="column">
-                <h1>Female Immigrants Origins and Asian Region Destinations, 2020</h1>
-                <h2 id="region">Overview</h2>
-                <h3>Where are they from and where do they go?</h3>
-
-                Migration often takes place within regions
-                In 2020, nearly half of all international migrants at the global level were living in their region of
-                origin.
+                <h1 id="region">Overview</h2>
+                    <h2>Migration Often Takes Place Within Regions </h2>
+                    <p> People tend to move between countries or areas that are geographically close or share common
+                        characteristics. In the context of the five Asian regions, such intraregional migration could be
+                        driven by factors like cultural similarities, historical ties, economic opportunities, and
+                        shared geopolitical contexts.</p>
+                    <h2>About Western Asia</h2>
+                    <p> The corridor Central and Southern Asia, and Northern Africa and Western Asia to Western Asia
+                        grew the most, with 13 million migrants added between 2000 and 2020; more than tripling in size.
+                        The majority of that increase resulted from labour migration from Bangladesh, India, Pakistan,
+                        Nepal and Sri Lanka to the countries of the Gulf Cooperation Council (GCC) (Valenta, 2020).</p>
             </div>
         </div>
+        <footer>
+            <p>
+                Starter Code Credits: <a href="https://observablehq.com/@d3/sankey/2?collection=@d3/d3-sankey"
+                    target="_blank">Observable</a>
+                | Data Source: <a href="https://www.un.org/development/desa/pd/content/international-migrant-stock"
+                    target="_blank">United Nations</a>
+                | Modified by: CJM
+            </p>
+        </footer>
     </div>
     <script>
         var units = "Immigrants";
