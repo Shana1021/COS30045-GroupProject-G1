@@ -166,20 +166,21 @@
     //#endregion FORMATTERs
 
     //Color scale    
-    const deciles = [0 /*added so 0 wont show up white */, 24774.5, 71522, 139773.5, 267922, 516920.5, 1050070, 1916439.5, 3632496, 9857625.5, 280598105]
+    const deciles = [1000, 24774.5, 71522, 139773.5, 267922, 516920.5, 1050070, 1916439.5, 3632496, 9857625.5, 280598105]
     const colorScale = d3.scaleThreshold()
         .domain(deciles)
-        .range(["#D4ECFF",
-            "#B0DDFE",
-            "#8DD0F9",
-            "#6EC3F1",
-            "#54B6E7",
-            "#3BA8D9",
-            "#269AC9",
-            "#1487BD",
-            "#0571AD",
-            "#005C99",
-            "#00467D"]);
+        .range([
+            "#FFD2B9",
+            "#FFC1A4",
+            "#FFAF8E",
+            "#FF9D79",
+            "#FF8965",
+            "#FF7551",
+            "#DC4E2D",
+            "#BA3E20",
+            "#972F14",
+            "#74220C",
+            "#521605"]);
 
     //#region LEGEND
     const legendWidth = 500; // Adjust the width of the legend
@@ -235,7 +236,6 @@
 
         svg.select("g.asia").remove();
         for (const [key, value] of Object.entries(dataset)) {
-            console.log(key, value);
             switch (selectedGender) {
                 case "M":
                     data.set(key, dataset[key].male)
@@ -248,7 +248,6 @@
             }
         }
 
-        console.log(topo)
         svg.append("g")
             .attr("class", "asia") // create a group called 'asia' map
             .selectAll("path")
@@ -264,8 +263,10 @@
             // set the color of each country
             .attr("fill", function (d) {
                 d.total = data.get(d.id)[year] || 0;
-                console.log(`${d.id} : ${selectedGender}, ${1990 + year * 5} year => ${d.total} `)
-                return colorScale(d.total);
+                if (d.total == 0)
+                    return "#FFF0E6"
+                else
+                    return colorScale(d.total);
             })
             .style("stroke", "#555")
             .attr("class", function (d) { return "Country" })
@@ -350,7 +351,7 @@
         .width(w + margin.left + margin.right - 20)
         .tickValues(yearList)
         .tickFormat(formatYear)
-        .fill('#00467D')
+        .fill('#972F14')
         .default(yearList[yearList.length - 1])
         .handle(d3.symbol().type(d3.symbolCircle).size(100)()) // size of slider dragger
         .on("onchange", function (val) {
