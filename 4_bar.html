@@ -111,10 +111,10 @@
                 <!-- Create a legend element -->
                 <div class="legend">
                     <div class="legend-item">
-                        <div class="legend-color" style="background-color: #4FA05C;"></div> Emmigrants
+                        <div class="legend-color" style="background-color: #C50126ff;"></div> Emmigrants
                     </div>
                     <div class="legend-item">
-                        <div class="legend-color" style="background-color: #C7492F;"></div> Immigrants
+                        <div class="legend-color" style="background-color: #0B2246ff;"></div> Immigrants
                     </div> 
                 </div>
             </div>
@@ -159,7 +159,7 @@
         // Define color scale for data series (Emmigrants and Immigrants)
         var color = d3.scaleOrdinal()
             .domain(["Emmigrants", "Immigrants"])
-            .range(["#4FA05C", "#C7492F"]);
+            .range(["#C50126ff", "#0B2246ff"]);
 
         // Load data from a CSV file named "BarChart.csv"
         d3.csv("/data/d.csv").then(function(data) {
@@ -206,6 +206,14 @@
                 .attr("width", x0.bandwidth())
                 .attr("title", function (d) { return d[1] - d[0]; }) // Actual value
 
+                var regionToCountries = {
+                    "Central Asia": ["Kazakhstan", "Kyrgzstan", "Tajikistan", "Turkmenistan", "Uzbekistan"],
+                    "Eastern Asia": ["China", "China, Hong Kong", "China, Macao", "Japan", "Mongolia", "North Korea", "South Korea"],
+                    "South - Eastern Asia": ["Brunei", "Cambodia", "Indonesia", "Laos", "Malaysia", "Myanmar", "Philippines", "Singapore", "Thailand", "Timor-Leste", "Viet Nam"],
+                    "Southern Asia": ["Afghanistan", "Bangladesh", "Bhutan", "India", "Iran", "Maldives", "Nepal", "Pakistan", "Sri Lanka"],
+                    "Western Asia": ["Armenia", "Azerbaijan", "Bahrain", "Cyprus", "Georgia", "Iraq", "Israel", "Jordan", "Kuwait", "Lebanon", "Oman", "Qatar", "Saudi Arabia", "Palestine", "Syrian Arab Republic", "Turkey", "United Arab Emirates"]
+                };
+
             // Add x-axis label
             g.append("text")
                 .attr("class", "x label")
@@ -246,6 +254,23 @@
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x0));
+
+           // Add x-axis labels with click event listener
+            g.selectAll(".x.axis .tick text")
+                .on("click", function (event, d) {
+                    var region = d;
+                    var countries = regionToCountries[region];
+
+                    // Show tooltip at the center of the chart
+                    var x = width / 2;
+                    var y = height / 2;
+
+                    // Display tooltip with list of countries
+                    tooltip.style("opacity", 1)
+                        .html("<strong>" + region + "</strong><br>" + countries.join("<br>"))
+                        .style("left", x+ "px")
+                        .style("top", (y + 100) + "px");
+                });
 
             // Create and show the tooltip
             var tooltip = d3.select("body").select(".tooltip");
