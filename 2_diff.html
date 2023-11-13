@@ -58,14 +58,12 @@
     d3.csv("/data/b.csv", function (d) {
         return d;
     }).then(function (data) {
-        // console.log(data)
 
         let columns = ['sex', 'year', 'Central Asia', 'Eastern Asia', 'South-Eastern Asia', 'Southern Asia', 'Western Asia']
         for (d of data) {  // make sure correct data types for: (1) year -> date, (2) migrants number -> number
             d.year = new Date(d.year, 0, 1);
             for (var i = 2, n = columns.length, c; i < n; ++i) // i = 2 means to start after 'year'
                 d[c = columns[i]] = +d[c];
-            console.log(d)
         }
         var regions = data.columns.slice(2).map(function (id) { //new array starting at 3th column
             return {
@@ -78,7 +76,7 @@
                     })
             };
         });
-        // console.log(regions)
+
         x.domain(d3.extent(data, function (d) { return d.year; }));
 
         y.domain([-685995, 30148030]);
