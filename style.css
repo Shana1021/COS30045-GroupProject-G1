@@ -1,136 +1,49 @@
 @import url(https://fonts.googleapis.com/css?family=Oswald:300,400,700);
 @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic);
-footer {
-  text-align: center;
-  color: #aaa;
-}
-/* Override site */
-#main {
-  width: 100%;
-  padding: 0;
-}
-.content-asset p {
-  margin: 0 auto;
-}
-.breadcrumb {
-  display: none;
-}
+footer { text-align: center; color: #aaa; }
 
-/* Helpers */
+/* Override site */
+#main { width: 100%; padding: 0; }
+.content-asset p { margin: 0 auto; }
+.breadcrumb { display: none; }
+
+
+/*Color*/
 /**************************/
-.margin-top-10 {
-  padding-top: 10px;
-}
-.margin-bot-10 {
-  padding-bottom: 10px;
-}
+:root{
+  --cardinal: #D20939ff;
+ --harvest-gold: #F3A80Eff;
+ --sinopia: #DB2D09ff;
+ --persian-orange: #EE9453ff;
+ --fire-engine-red: #C50126ff;
+ --tomato: #FE603Dff;
+ --raspberry: #E31F5Fff;
+ --oxford-blue: #0B2246ff;
+ --orange-peel: #FF9E1Eff;
+ --peach: #FEEDC0ff;
+ 
+ /*color:var(--cardinal)*/
+ }
+
 
 /* Typography */
 /**************************/
-#container h1 {
-  font-family: "Oswald", sans-serif;
-  font-size: 24px;
-  font-weight: 400;
-  text-transform: uppercase;
-  color: black;
-  padding: 0;
-  margin: 0;
-}
-#container h2 {
-  font-family: "Oswald", sans-serif;
-  font-size: 70px;
-  letter-spacing: 10px;
-  text-align: center;
-  color: white;
-  font-weight: 400;
-  text-transform: uppercase;
-  z-index: 10;
-  opacity: 0.9;
-}
-#container h3 {
-  font-family: "Oswald", sans-serif;
-  font-size: 14px;
-  line-height: 0;
-  font-weight: 400;
-  letter-spacing: 8px;
-  text-transform: uppercase;
-  color: black;
-}
-#container p {
-  font-family: "Source Sans Pro", sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 24px;
-}
-.capital {
-  font-weight: 400;
-  float: left;
-  font-size: 84px;
-  line-height: 64px;
-  padding-top: 4px;
-  padding-right: 8px;
-  padding-left: 3px;
-  font-family: "Source Sans Pro", sans-serif;
-}
-
-.one {
-  color: #3b8595;
-}
-.two {
-  color: #3d3c3a;
-}
-.three {
-  color: #c48660;
-}
-.four {
-  color: #3b8595;
-}
-.five {
-  color: #3d3c3a;
-}
-.six {
-  color: #c48660;
-}
+#container h1 { font-family: "Oswald", sans-serif; font-size: 24px; font-weight: 400; text-transform: uppercase; color: black; padding: 0; margin: 0; }
+#container h2 { font-family: "Oswald", sans-serif; font-size: 70px; letter-spacing: 10px; text-align: center; color: white; font-weight: 400; text-transform: uppercase; z-index: 10; opacity: 0.9 }
+#container h3 { font-family: "Oswald", sans-serif; font-size: 14px; line-height: 0; font-weight: 400; letter-spacing: 8px; text-transform: uppercase; color: black; }
+#container p { font-family: "Source Sans Pro", sans-serif; font-weight: 400; font-size: 14px; line-height: 24px; }
 
 /* Section - Title */
 /**************************/
-#container .title {
-  background: white;
-  padding: 60px;
-  margin: 0 auto;
-  text-align: center;
-}
-#container .title h1 {
-  font-size: 35px;
-  letter-spacing: 8px;
-}
+#container .title { background: white; padding: 60px; margin: 0 auto; text-align: center; }
+#container .title h1 { font-size: 35px; letter-spacing: 8px; }
 
 /* Section - Block */
 /**************************/
-#container .block {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: white;
-  /* padding: 60px; */
-  width: 1380px;
-  height: 100vh;
-  margin: 0 auto;
-  text-align: justify;
-}
-#container .block-gray {
-  background: #f2f2f2;
-  padding: 60px;
-}
-#container .section-overlay-mask {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: black;
-  opacity: 0.7;
-}
+#container .block { display: flex; align-items: center; justify-content: space-between; background: white; /* padding: 60px; */ width: 1380px; height: 100vh; margin: 0 auto; text-align: justify; }
+#container .block-gray { background: #f2f2f2; padding: 60px; }
+#container .section-overlay-mask { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: black; opacity: 0.7; }
+
 /* Section - section */
 /**************************/
 #container .section-one {
@@ -139,7 +52,7 @@ footer {
   overflow: hidden;
   position: relative;
   width: 100%;
-  background-image: url("img/image4.avif");
+  background-image: url("img/1.jpg");
   background-attachment: fixed;
   background-size: cover;
   -moz-background-size: cover;
@@ -153,7 +66,7 @@ footer {
   overflow: hidden;
   position: relative;
   width: 100%;
-  background-image: url("img/image5.jpg");
+  background-image: url("img/2.webp");
   background-attachment: fixed;
   background-size: cover;
   -moz-background-size: cover;
@@ -195,7 +108,7 @@ footer {
   overflow: hidden;
   position: relative;
   width: 100%;
-  background-image: url("img/image3.jpg");
+  background-image: url("img/5.jpg");
   background-attachment: fixed;
   background-size: cover;
   -moz-background-size: cover;
@@ -209,7 +122,7 @@ footer {
   overflow: hidden;
   position: relative;
   width: 100%;
-  background-image: url("img/image6.jpg");
+  background-image: url("img/6.jpg");
   background-attachment: fixed;
   background-size: cover;
   -moz-background-size: cover;

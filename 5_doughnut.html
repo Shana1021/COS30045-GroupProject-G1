@@ -65,12 +65,14 @@
             width: 20px;
             height: 20px;
             margin-right: 10px;
+            float: left;
         }
         .legend-text {
-            display: inline-block;
+            display:inline-block;
             font-size: 14px;
             font-weight: bolder;
         }
+
     </style>
 </head>
 <body>
@@ -78,16 +80,16 @@
         <div class="row">
             <div class="column">
                 <h2>Regional Disparities in Female Emigration.</h2>
-                <p>The observation that more female migrants are leaving Asia, particularly from the Southern and 
-                    South-Eastern regions, suggests potential economic or social factors influencing their decisions 
+                <p>The observation that more female migrants are leaving Asia, particularly from the Southern and
+                    South-Eastern regions, suggests potential economic or social factors influencing their decisions
                     to migrate. Economic opportunities, educational pursuits, or employment prospects may be contributing to this trend.</p>
                 <h2>Female Migration Preferences for Western Asia </h2>
-                <p></p>The higher preference of female migrants for Western Asia might indicate the presence of 
-                specific opportunities, such as job markets, industries, or societal conditions that attract women 
+                <p></p>The higher preference of female migrants for Western Asia might indicate the presence of
+                specific opportunities, such as job markets, industries, or societal conditions that attract wome
                 to this region. Cultural factors, like acceptance and empowerment of women, could also play a role.</p>
                 <h2>Southern Asia consists of High Female Emmigrants</h2>
-                <p>Southern Asia's prominence in female emigration underlines the region's 
-                    significant role in the overall gendered migration landscape.  The prevalence of emigration 
+                <p>Southern Asia's prominence in female emigration underlines the region's
+                    significant role in the overall gendered migration landscape.  The prevalence of emigration
                     in this region suggests a complex interplay of push and pull factors, where economic opportunities 
                     abroad or social considerations could be influencing women's decisions to seek opportunities beyond their home countries</p>
             </div>
@@ -119,7 +121,13 @@
             .append("g")
             .attr("transform", `translate(${width / 2 + margin}, ${height / 2 + margin})`);
 
-        const color = d3.scaleOrdinal(d3.schemeCategory10);
+        const colors = [
+        "#D20939ff",
+        "#F3A80Eff",
+        "#DB2D09ff",
+        "#E31F5Fff",
+        "#0B2246ff"
+            ];
 
         const dataFiles = ["/data/e.csv/2000.csv", "/data/e.csv/2005.csv", "/data/e.csv/2010.csv", "/data/e.csv/2015.csv", "/data/e.csv/2020.csv"];
         let currentIndex = 0;
@@ -146,9 +154,9 @@
       .enter()
       .append("path")
       .attr("d", arc)
-      .attr("fill", d => color(d.data.key))
+      .attr("fill", (d, i) => colors[i])
       .attr("class", "slice")
-      .attr("stroke", "white")
+      .attr("stroke", "black")
       .attr("stroke-width", 2);
 
     // Add text labels in the slices as percentages
@@ -161,7 +169,7 @@
       .style("text-anchor", "middle")
       .style("font-weight", "bold")
       .style("font-size", "14px")
-      .style("fill", "black")
+      .style("fill", "white")
       .text(d => ((d.endAngle - d.startAngle) / (2 * Math.PI) * 100).toFixed(1) + "%") // Display as percentage
       .attr("class", "value");
 
@@ -191,7 +199,7 @@
 
             newItem.append("div")
                 .attr("class", "legend-color")
-                .style("background-color", d => color(d.key));
+                .style("background-color", (d, i) => colors[i]);
 
             newItem.append("div")
                 .attr("class", "legend-text")
