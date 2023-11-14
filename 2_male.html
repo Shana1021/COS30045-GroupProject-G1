@@ -157,6 +157,10 @@
             region.selectAll('.line').style('stroke', d => {
                 return z(d.id)
             });
+            svg.selectAll('.label')
+                .attr('fill', d => {
+                    return "black"
+                });
         }
 
         function click(elem) {
