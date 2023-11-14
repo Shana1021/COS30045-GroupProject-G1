@@ -43,7 +43,13 @@
 
     var x = d3.scaleTime().range([0, width - margin.right]),
         y = d3.scaleLinear().range([height, 0]),
-        z = d3.scaleOrdinal(d3.schemeCategory10);
+        z = d3.scaleOrdinal().range([
+            "#d20939ff",
+            "#f3a80eff",
+            "#2F47C2",
+            "#1C762B",
+            "#74220c",
+        ]);;
 
     const makeLine = (xScale) => d3.line()
         .curve(d3.curveBasis)
@@ -117,8 +123,8 @@
             if (path.attr('visibility') == 'hidden') {
                 return;
             }
-            console.log(elem)
-            console.log(d)
+            // console.log(elem)
+            // console.log(d)
 
             region.selectAll('.line').style('stroke', d => {
                 let target_id = d.id.substring(0, 6).toUpperCase();
@@ -128,6 +134,16 @@
                     return '#eaeaea'
                 }
             });
+
+            svg.selectAll('.label')
+                .attr('fill', d => {
+                    let target_id = d.id.substring(0, 6).toUpperCase();
+                    if (d.id.substring(0, 6).toUpperCase() == id) {
+                        return "black"
+                    } else {
+                        return '#eaeaea'
+                    }
+                });
         }
 
         function exit(elem) {
@@ -140,6 +156,10 @@
             region.selectAll('.line').style('stroke', d => {
                 return z(d.id)
             });
+            svg.selectAll('.label')
+                .attr('fill', d => {
+                    return "black"
+                });
         }
 
         function click(elem) {
