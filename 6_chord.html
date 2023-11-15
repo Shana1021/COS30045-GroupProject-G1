@@ -66,6 +66,8 @@
               <div class="chart-viewport" id="chart-viewport">
                 <!-- Chart will be contained within this viewport -->
               </div>
+              <p>Source: IOM’s Missing Migrant Project (2023), <a href="https://missingmigrants.iom.int/region/asia">https://missingmigrants.iom.int/region/asia</a></p>
+
             </div>
     </div>
         <div class="column-2">
@@ -364,7 +366,7 @@ document.getElementById("csv1").addEventListener("click", function() {
 document.getElementById("csv2").addEventListener("click", function() {
   if (currentDataFile !== "/data/f.csv/males.csv") {
     updateChordDiagram("/data/f.csv/males.csv");
-    updateTextContent("Regional Disparities in Available Data", "It also reveals regional disparities in the availability of data on female migrant deaths. While the Mediterranean route stands out as particularly deadly for women, other regions, such as Africa, Southeast Asia, and the US-Mexico border, also report significant numbers of female migrant deaths. In 2017, Southeast Asia was the second largest region to hold the highest amount of fatalities with 90 deaths. The limited sex-disaggregated data makes it challenging to pinpoint the most dangerous migratory routes for women.");
+    updateTextContent("Regional Disparities in Available Data", "It also reveals regional disparities in the availability of data on female migrant deaths. While the Mediterranean route stands out as particularly deadly for women, other regions, such as Africa, Southeast Asia, and the US-Mexico border, also report significant numbers of female migrant deaths.\n\nFrom the years 2014 to 2023,Southeast Asia and Southern Asia has been the biggest contributor to the fatality rate with 3167 and 2494 deaths respectively, in the Asian region. In 2017, Southeast Asia was the second largest region to hold the highest amount of fatalities among other major regions. The limited sex-disaggregated data makes it challenging to pinpoint the most dangerous migratory routes for women.");
   }
 });
 
