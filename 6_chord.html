@@ -78,20 +78,12 @@
               <button class="button" id="csv3">Unknown</button>
             </div>
           </div> 
-            <h2>Regional Disparities in Female Emigration.</h2>
-            <p>The observation that more female migrants are leaving Asia, particularly from the Southern and 
-                South-Eastern regions, suggests potential economic or social factors influencing their decisions 
-                to migrate. Economic opportunities, educational pursuits, or employment prospects may be contributing to this trend.</p>
-            <h2>Female Migration Preferences for Western Asia </h2>
-            <p></p>The higher preference of female migrants for Western Asia might indicate the presence of 
-            specific opportunities, such as job markets, industries, or societal conditions that attract women 
-            to this region. Cultural factors, like acceptance and empowerment of women, could also play a role.</p>
-            <h2>Southern Asia consists of High Female Emmigrants</h2>
-            <p>Southern Asia's prominence in female emigration underlines the region's 
-                significant role in the overall gendered migration landscape.  The prevalence of emigration 
-                in this region suggests a complex interplay of push and pull factors, where economic opportunities 
-                abroad or social considerations could be influencing women's decisions to seek opportunities beyond their home countries</p>
-        </div>
+            <h2 id="sectionTitle">Data Gaps and Invisibility of Female Migrant Deaths</h2>
+            <p id="sectionContent">This diagram highlights significant gaps in data concerning the deaths and disappearances 
+              of migrants, particularly the absence of basic information such as the sex of the deceased. 
+              This lack of sex-disaggregated data contributes to the invisibility of female migrant deaths,
+              making it challenging to address the specific risks and conditions they face during their journeys.</p>
+            </div>
     </div>
 </div>
 <div id="tooltip" style="position: absolute; display: none; background: #000000b2; padding: 5px; border: 1px solid #ccc; color: #ffffff;"></div>
@@ -348,31 +340,40 @@ function resetChart() {
  currentChord = chords; // Adjust this line if 'chords' has a different name
     }
 
-    // Event listeners for the data buttons
-    document.getElementById("csv").addEventListener("click", function() {
-      if (currentDataFile !== "/data/f.csv/total-death-and-missing.csv") {
-        updateChordDiagram("/data/f.csv/total-death-and-missing.csv");
-      }
-    });
+   // Function to update the HTML text based on the button clicked
+function updateTextContent(title, content) {
+  document.getElementById("sectionTitle").textContent = title;
+  document.getElementById("sectionContent").innerHTML = content.replace(/\n/g, "<br>");
+}
 
-    // Event listeners for the data buttons
-    document.getElementById("csv1").addEventListener("click", function() {
-      if (currentDataFile !== "/data/f.csv/females.csv") {
-        updateChordDiagram("/data/f.csv/females.csv");
-      }
-    });
+// Event listeners for the data buttons
+document.getElementById("csv").addEventListener("click", function() {
+  if (currentDataFile !== "/data/f.csv/total-death-and-missing.csv") {
+    updateChordDiagram("/data/f.csv/total-death-and-missing.csv");
+    updateTextContent("Data Gaps and Invisibility of Female Migrant Deaths", "This diagram highlights significant gaps in data concerning the deaths and disappearances of migrants, particularly the absence of basic information such as the sex of the deceased. This lack of sex-disaggregated data contributes to the invisibility of female migrant deaths, making it challenging to address the specific risks and conditions they face during their journeys.");
+  }
+});
 
-    document.getElementById("csv2").addEventListener("click", function() {
-      if (currentDataFile !== "/data/f.csv/males.csv") {
-        updateChordDiagram("/data/f.csv/males.csv");
-      }
-    });
+document.getElementById("csv1").addEventListener("click", function() {
+  if (currentDataFile !== "/data/f.csv/females.csv") {
+    updateChordDiagram("/data/f.csv/females.csv");
+    updateTextContent("Underreporting and Unknown Identities", "The scarcity of information on the deaths of migrant women is exacerbated by the circumstances surrounding their demise. Due to the challenges in recovering bodies and reporting, a significant number of female migrant deaths remain unknown and unrecorded. The lack of identification perpetuates the underreporting of incidents, particularly those involving women.");
+  }
+});
 
-    document.getElementById("csv3").addEventListener("click", function() {
-      if (currentDataFile !== "/data/f.csv/unknown.csv") {
-        updateChordDiagram("/data/f.csv/unknown.csv");
-      }
-    });
+document.getElementById("csv2").addEventListener("click", function() {
+  if (currentDataFile !== "/data/f.csv/males.csv") {
+    updateChordDiagram("/data/f.csv/males.csv");
+    updateTextContent("Regional Disparities in Available Data", "It also reveals regional disparities in the availability of data on female migrant deaths. While the Mediterranean route stands out as particularly deadly for women, other regions, such as Africa, Southeast Asia, and the US-Mexico border, also report significant numbers of female migrant deaths. In 2017, Southeast Asia was the second largest region to hold the highest amount of fatalities with 90 deaths. The limited sex-disaggregated data makes it challenging to pinpoint the most dangerous migratory routes for women.");
+  }
+});
+
+document.getElementById("csv3").addEventListener("click", function() {
+  if (currentDataFile !== "/data/f.csv/unknown.csv") {
+    updateChordDiagram("/data/f.csv/unknown.csv");
+    updateTextContent("Addressing the Tragic Impact on Families", "Beyond the statistics, it also underscores the profound impact on families left behind, often comprising mothers, wives, and children. The absence of information about the fate of a migrant family member can lead to tragic consequences, including legal, economic, social, and emotional challenges.Recognizing and addressing these impacts is essential for a comprehensive understanding of the consequences of female migrant deaths.\n\nRecording information on migrant deaths is just the initial step, preventing future tragedies requires a deeper understanding of why women undertake migration journeys and the gendered dimensions of the risks they face. More research is essential to uncover the root causes, enabling targeted interventions to address the specific challenges faced by female migrants. Additionally, providing support and information to families left behind is crucial in mitigating the multifaceted consequences of missing migrant incidents.");
+  }
+});
 
     // Initialize the chord diagram with the default data
     updateChordDiagram(currentDataFile);
