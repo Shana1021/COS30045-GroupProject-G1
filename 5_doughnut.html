@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>5_doughnut</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
     <style>
         .wrapper {
             margin-top: 150px;
@@ -35,7 +36,7 @@
             font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
             text-anchor: middle;
             position: fixed;
-            top: 45%;
+            top: 42%;
             left: 80.5%;
             transform: translate(-50%, -50%);
             margin-top: 95px;
@@ -73,6 +74,30 @@
             font-weight: bolder;
         }
 
+        /*Text*/
+        h1 {
+            font-family: "Oswald", sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            text-transform: uppercase;
+            color: black;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+    h2 {
+            font-family: "Oswald", sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+        }
+
+    p  {
+            font-family: "Source Sans Pro", sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 24px;
+        }
+
     </style>
 </head>
 <body>
@@ -97,18 +122,22 @@
                </div>
             
             <div class="column-2">
-                <h2>Asian Female Emigrants to destination country based on income level of countries over the years 2000
-                    to 2020.</h2>
-                 <!-- Radio buttons for selecting chart mode (stacked or grouped) -->
+                <h2>ASIAN FEMALE EMIGRANTS TO DESTINATION COUNTRY BASED ON INCOME LEVEL OF COUNTRIES OVER THE YEARS 2000 TO 2020.</h2>
                  <div id="chart-container" class="chart-container">
                     <div id="chart" class="chart"></div>
                     <div id="timer" class="timer">2000</div>
+                    <footer>
+                        <p>
+                            Starter Code Credits: <a href="https://d3-graph-gallery.com/graph/donut_basic.html" target="_blank">D3.js Graph Gallery</a>
+                            | Data Source: <a href="https://www.un.org/development/desa/pd/content/international-migrant-stock"
+                                target="_blank">United Nations</a>
+                            | Modified by: Nakshatra
+                        </p>
+                    </footer>
+
                 </div>
                 <div id="legend" class="legend"></div>
             </div>
-        </div>
-        <div class="row">
-            <p>Source: United Nations Department of Economic and Social Affairs, Population Division (2020b),<a href="https://www.un.org/development/desa/pd/content/international-migrant-stock">https://www.un.org/development/desa/pd/content/international-migrant-stock"</a>. International Migrant Stock 2020.</p>
         </div>
     </div>
     <script>

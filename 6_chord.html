@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6_chord</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
   <style>
      .wrapper {
         margin-top: 150px;
@@ -18,6 +23,11 @@
     .column-2{
         flex: 50%;
         padding-left: 80px;
+    }
+
+    .chart-container{
+      margin: 0;
+      padding: 0;
     }
 
     .legend-container {
@@ -53,21 +63,50 @@
         background-color: #D20939ff;
         color: white;
     }
+
+    /*Text*/
+    h1 {
+            font-family: "Oswald", sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            text-transform: uppercase;
+            color: black;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+    h2 {
+            font-family: "Oswald", sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+        }
+
+    p,button  {
+            font-family: "Source Sans Pro", sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 24px;
+        }
   </style>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
   <div class="wrapper">
-    <h2>Fatality rate of Asian Emigrants to destination region over the years of 2000 to 2020.</h2>
     <div class="row">
     <div class="column">
+      <h2>FATALITY RATE OF ASIAN EMIGRANTS AT DESTINATION REGION OVER THE YEARS.</h2>
             <!-- Chart SVG -->
             <div class="chart-container" id="chart-container">
               <div class="chart-viewport" id="chart-viewport">
                 <!-- Chart will be contained within this viewport -->
               </div>
-              <p>Source: IOM’s Missing Migrant Project (2023), <a href="https://missingmigrants.iom.int/region/asia">https://missingmigrants.iom.int/region/asia</a></p>
-
+              <footer>
+                <p>
+                    Starter Code Credits: <a href="https://observablehq.com/@d3/directed-chord-diagram/2" target="_blank">Observable</a>
+                    | Data Source: <a href="https://missingmigrants.iom.int/region/asia"
+                        target="_blank">IOM’s Missing Migrant Project</a>
+                    | Modified by: Nakshatra
+                </p>
+            </footer>
             </div>
     </div>
         <div class="column-2">

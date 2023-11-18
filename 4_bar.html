@@ -5,6 +5,7 @@
     <title>Chart 4</title>
     <!-- Include D3.js library for data visualization -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
     <style>
     .wrapper {
         margin-top: 150px;
@@ -93,13 +94,37 @@
         background-color:#D20939ff;
         color: white;
     }
+
+    /*Text*/
+    h1 {
+            font-family: "Oswald", sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            text-transform: uppercase;
+            color: black;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+    h2 {
+            font-family: "Oswald", sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+        }
+
+    p,label  {
+            font-family: "Source Sans Pro", sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 24px;
+        }
     </style>
 </head>
 <body>
     <div class="wrapper">
         <div class="row">
             <div class="column">
-                <h2>Female Emigrants (Asian origin) and Immigrants (Asian destination) share in the year 2020 </h2>
+                <h1>Female Emigrants (Asian origin) and Immigrants (Asian destination) share in the year 2020 </h1>
                  <!-- Radio buttons for selecting chart mode (stacked or grouped) -->
                     <form>
                         <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
@@ -117,7 +142,14 @@
                         <div class="legend-color" style="background-color: #0B2246ff;"></div> Immigrants
                     </div> 
                 </div>
-                    <p>Source: United Nations Department of Economic and Social Affairs,International Migrant Stock 2020. <a href="https://www.un.org/development/desa/pd/content/international-migrant-stock"> https://www.un.org/development/desa/pd/content/international-migrant-stock.</a></p>
+                <footer>
+                    <p>
+                        Starter Code Credits: <a href="https://observablehq.com/@d3/stacked-to-grouped-bars" target="_blank">Observable</a>
+                        | Data Source: <a href="https://www.un.org/development/desa/pd/content/international-migrant-stock"
+                            target="_blank">United Nations</a>
+                        | Modified by: Nakshatra
+                    </p>
+                </footer>
             </div>
             <div class="column-2">
                 <h2>Regional Disparities in Female Emigration.</h2>
@@ -125,7 +157,7 @@
                     South-Eastern regions, suggests potential economic or social factors influencing their decisions 
                     to migrate. Economic opportunities, educational pursuits, or employment prospects may be contributing to this trend.</p>
                 <h2>Female Migration Preferences for Western Asia </h2>
-                <p></p>The higher preference of female migrants for Western Asia might indicate the presence of 
+                <p>The higher preference of female migrants for Western Asia might indicate the presence of 
                 specific opportunities, such as job markets, industries, or societal conditions that attract women 
                 to this region. Cultural factors, like acceptance and empowerment of women, could also play a role.</p>
                 <h2>Southern Asia consists of High Female Emmigrants</h2>
